@@ -1,6 +1,6 @@
 ---
 name: react-native-ux
-description: UX quality rules for React Native and Expo mobile apps styled with NativeWind (Tailwind for React Native). Use this whenever building, editing, restyling, or reviewing any mobile screen or component, including lists, forms, buttons, tab bars, headers, modals, bottom sheets, alignment, spacing, safe areas, keyboard handling, loading and error states, gestures, or accessibility. Also use it when the user asks to audit, review, polish, or fix mobile UX or UI, says a screen feels off, cramped, janky, or "AI generated", or asks for any app feature even if they never mention UX. Not for React web apps (use mern-web-ux for those).
+description: UX quality rules for React Native and Expo mobile apps styled with NativeWind (Tailwind for React Native). Use this whenever building, editing, restyling, or reviewing any mobile screen or component, including lists, forms, buttons, tab bars, headers, modals, bottom sheets, alignment, spacing, safe areas, keyboard handling, loading and error states, gestures, or accessibility. Also use it when the user asks to audit, review, polish, or fix mobile UX or UI, says a screen feels off, cramped, janky, or "AI generated", or asks for any app feature even if they never mention UX. Not for React web apps (use web-app-ux for those).
 ---
 
 # React Native UX

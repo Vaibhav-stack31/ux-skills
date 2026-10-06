@@ -6,7 +6,7 @@
     {
       "name": "ux-skills",
       "source": { "source": "github", "repo": "Vaibhav-stack31/ux-skills" },
-      "description": "UX rules and audits for MERN web apps and React Native apps"
+      "description": "UX rules and audits for React web apps (plain React, MERN, Next.js) and React Native apps"
     }
   ]
 }

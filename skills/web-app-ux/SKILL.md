@@ -1,9 +1,9 @@
 ---
-name: mern-web-ux
-description: UX quality rules for React web UIs in MERN stack apps (React, Next.js, Tailwind CSS, shadcn/ui, Express, MongoDB). Use this whenever building, editing, restyling, or reviewing any web UI, including pages, dashboards, forms, tables, lists, cards, buttons, modals, navigation, layout, alignment, spacing, loading and error states, responsive behavior, or accessibility. Also use it when the user asks to audit, review, polish, or fix UX or UI, says something looks off, misaligned, cluttered, or "AI generated", or asks for any frontend feature even if they never mention UX. Not for React Native apps (use react-native-ux for those).
+name: web-app-ux
+description: UX quality rules for React web UIs, covering plain React, MERN stack, and Next.js apps (React, Next.js, Tailwind CSS, shadcn/ui, Express, MongoDB). Use this whenever building, editing, restyling, or reviewing any web UI, including pages, dashboards, forms, tables, lists, cards, buttons, modals, navigation, layout, alignment, spacing, loading and error states, responsive behavior, or accessibility. Also use it when the user asks to audit, review, polish, or fix UX or UI, says something looks off, misaligned, cluttered, or "AI generated", or asks for any frontend feature even if they never mention UX. Not for React Native apps (use react-native-ux for those).
 ---
 
-# MERN Web UX
+# Web App UX
 
 Generated UI usually looks finished and still fails real users. The reason is consistent: it is built for the happy path with perfect sample data. Real users arrive with zero records or ten thousand, slow networks, long names, small screens, keyboards, and mistakes. This skill exists so that every screen you build or review survives those conditions.
 

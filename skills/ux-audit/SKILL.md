@@ -16,13 +16,13 @@ If the user gave a path or scope, audit only that. Otherwise audit the whole pro
 Read the nearest `package.json` for the audited path.
 
 - `react-native` or `expo` in dependencies: use the sibling skill `react-native-ux`.
-- `react-dom` or `next` in dependencies: use the sibling skill `mern-web-ux`. It covers Next.js projects.
+- `react-dom` or `next` in dependencies: use the sibling skill `web-app-ux`. It covers Next.js projects.
 - A monorepo with both: find each package folder, then run the matching skill on each folder on its own. Give one report per folder.
 - Neither found: say so and ask which stack to use.
 
 ## 3. Find the sibling skill
 
-All skills install side by side, so look for `../react-native-ux/` or `../mern-web-ux/` relative to this skill folder.
+All skills install side by side, so look for `../react-native-ux/` or `../web-app-ux/` relative to this skill folder.
 
 If the folder is missing, stop. Tell the user which skill to install, for example `npx skills add Vaibhav-stack31/ux-skills` or `npx Vaibhav-stack31/ux-skills`.
 

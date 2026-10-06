@@ -2,7 +2,7 @@
 // Copies the bundled skills into a Claude Code skills folder.
 //   npx Vaibhav-stack31/ux-skills            -> ./.claude/skills   (this project)
 //   npx Vaibhav-stack31/ux-skills --global   -> ~/.claude/skills   (all projects)
-//   npx Vaibhav-stack31/ux-skills --only web | app | audit
+//   npx Vaibhav-stack31/ux-skills --only web | app | audit  (web = web-app-ux)
 //   npx Vaibhav-stack31/ux-skills --remove [--global]
 //   npx Vaibhav-stack31/ux-skills --quiet    (no banner)
 import fs from "node:fs";
@@ -43,19 +43,29 @@ const box = (lines) => {
 const source = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "skills");
 const base = flag("--global") ? os.homedir() : process.cwd();
 const target = path.join(base, ".claude", "skills");
-const all = ["mern-web-ux", "react-native-ux", "ux-audit"];
+const all = ["web-app-ux", "react-native-ux", "ux-audit"];
 const only = value("--only");
-const map = { web: "mern-web-ux", app: "react-native-ux", audit: "ux-audit" };
+const map = { web: "web-app-ux", app: "react-native-ux", audit: "ux-audit" };
 if (only && !map[only]) {
   console.error(`Unknown --only value "${only}". Use web, app or audit.`);
   process.exit(1);
 }
 const pick = only ? [map[only]] : all;
 const removing = flag("--remove");
+const OLD_NAMES = { "mern-web-ux": "web-app-ux" }; // renamed skills, cleaned up so both copies never load
 
 if (!flag("--quiet")) {
   console.log(paint("36", BANNER.join("\n")));
   console.log("\n  UX skills for Claude Code\n");
+}
+
+const replaced = [];
+for (const [old, now] of Object.entries(OLD_NAMES)) {
+  const stale = path.join(target, old);
+  if (pick.includes(now) && fs.existsSync(stale)) {
+    fs.rmSync(stale, { recursive: true, force: true });
+    replaced.push(`Replaced old ${old} with ${now}.`);
+  }
 }
 
 for (const name of pick) {
@@ -67,6 +77,7 @@ for (const name of pick) {
   }
 }
 
+if (replaced.length) console.log(replaced.join("\n") + "\n");
 const head = removing ? "REMOVED" : "INSTALLED";
 console.log(box([head, "", ...pick.map((n) => `* ${n}`), "", `Where: ${target}`]));
 if (!removing) {
