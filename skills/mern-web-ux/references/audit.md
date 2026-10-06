@@ -58,6 +58,14 @@ Read the component code for each screen and walk through these questions. The sc
 **Accessibility** (see `accessibility.md`)
 - Keyboard reachable, visible focus, named controls, sufficient contrast?
 
+**Next.js** (see `nextjs.md`, only if `next` is installed)
+- Does each data route have a `loading.tsx` or a Suspense boundary, plus `error.tsx` and `not-found.tsx` above it?
+- Is `"use client"` limited to small interactive components, not whole pages or layouts?
+- Do Server Actions return field errors and keep input, show pending, and check permissions themselves?
+- Are search, filters, sort, and page in the URL, and are titles set per route?
+- Any hydration risks (dates, random values, browser storage read during render)?
+- Auth decided on the server with no flash, and a return to the original page after sign in?
+
 **Data layer** (see `mern-data-ux.md`)
 - Is the list paginated on the server? Are API errors usable by the UI?
 

@@ -22,7 +22,7 @@
 
 ## 2. Showing where the user is
 
-- The active navigation item is visibly different (background and weight, not color alone) and has `aria-current="page"`. With React Router use `NavLink` and its `isActive` state.
+- The active navigation item is visibly different (background and weight, not color alone) and has `aria-current="page"`. With React Router use `NavLink` and its `isActive` state. In Next.js see `nextjs.md` section 8.
 - A parent item stays highlighted while the user is on its child pages.
 - Every page has one `h1` that matches the navigation label that led to it.
 - Set `document.title` per route in the form "Page name | App name". Tabs and history entries named only "App" are unusable.
@@ -64,7 +64,7 @@ Decide this for every mutation. Being left on a stale form after saving is a com
 - **Cancel**: return to where the user came from without side effects.
 - **Multi step flows**: end on a clear completion screen with the next sensible action.
 
-Use `navigate(path, { replace: true })` after a create so that Back does not return to the filled form and submit a duplicate.
+Use `navigate(path, { replace: true })` after a create so that Back does not return to the filled form and submit a duplicate. In Next.js see `nextjs.md` section 8.
 
 ## 7. Routes every app needs
 

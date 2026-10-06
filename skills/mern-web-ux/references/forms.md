@@ -92,7 +92,7 @@ Server errors:
 - Field level errors from the API (duplicate email, taken username) are mapped onto the matching field with `form.setError`. See `mern-data-ux.md` for the response shape.
 - Errors that are not tied to a field (network failure, server error) appear in an alert at the top of the form or above the buttons, with the form contents intact.
 
-Use the same schema (zod or similar) on client and server so rules cannot drift.
+Use the same schema (zod or similar) on client and server so rules cannot drift. In Next.js, forms use Server Actions; see `nextjs.md` section 5.
 
 ## 6. Submitting
 

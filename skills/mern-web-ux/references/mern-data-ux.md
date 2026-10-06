@@ -1,5 +1,7 @@
 # The data layer and UX (Express, MongoDB, React)
 
+In a Next.js project the same shapes apply to route handlers and Server Actions. See `nextjs.md` section 10.
+
 Much of what users feel as "bad UX" is caused below the UI: an API that returns everything at once, errors with no usable message, lists that do not update after a change. A good screen needs the backend to cooperate. Read this when writing or changing API routes, Mongoose models, or data fetching code.
 
 ## Contents

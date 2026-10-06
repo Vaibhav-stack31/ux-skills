@@ -1,6 +1,6 @@
 ---
 name: mern-web-ux
-description: UX quality rules for React web UIs in MERN stack apps (React, Tailwind CSS, shadcn/ui, Express, MongoDB). Use this whenever building, editing, restyling, or reviewing any web UI, including pages, dashboards, forms, tables, lists, cards, buttons, modals, navigation, layout, alignment, spacing, loading and error states, responsive behavior, or accessibility. Also use it when the user asks to audit, review, polish, or fix UX or UI, says something looks off, misaligned, cluttered, or "AI generated", or asks for any frontend feature even if they never mention UX. Not for React Native apps (use react-native-ux for those).
+description: UX quality rules for React web UIs in MERN stack apps (React, Next.js, Tailwind CSS, shadcn/ui, Express, MongoDB). Use this whenever building, editing, restyling, or reviewing any web UI, including pages, dashboards, forms, tables, lists, cards, buttons, modals, navigation, layout, alignment, spacing, loading and error states, responsive behavior, or accessibility. Also use it when the user asks to audit, review, polish, or fix UX or UI, says something looks off, misaligned, cluttered, or "AI generated", or asks for any frontend feature even if they never mention UX. Not for React Native apps (use react-native-ux for those).
 ---
 
 # MERN Web UX
@@ -20,7 +20,7 @@ Treat the rules here as the way a senior product designer would review your work
 Consistency with the app that already exists matters more than any ideal pattern, because users learn an interface once and expect it to behave the same everywhere. Before writing code, check:
 
 - `components.json` and the `components/ui` folder: which shadcn/ui components are installed, and whether the base is Radix or Base UI. Run `npx shadcn@latest info` when available.
-- `package.json`: Tailwind version (v4 configures tokens in CSS with `@theme`, v3 uses `tailwind.config.js`), router, data layer (TanStack Query, SWR, RTK Query, plain fetch), form library, toast library.
+- `package.json`: whether `next` is installed and which version. In a Next.js project read `references/nextjs.md` first, then check whether it uses the App Router (`app/` folder) or the Pages Router (`pages/` folder). Also check the Tailwind version (v4 configures tokens in CSS with `@theme`, v3 uses `tailwind.config.js`), router, data layer (TanStack Query, SWR, RTK Query, plain fetch), form library, toast library.
 - The global CSS file: the color, radius, and font tokens that already exist.
 - Two or three existing pages: how they do page headers, spacing, forms, tables, and empty states. Copy those patterns.
 
@@ -62,6 +62,7 @@ Write copy in plain language: buttons are a verb plus a noun ("Create project", 
 
 Read only what the task needs. Each file is self contained.
 
+- `references/nextjs.md`: how the rules are met in Next.js (route files for states, Server Actions for forms, URL state, auth). Read this first in any Next.js project.
 - `references/layout-and-visual.md`: spacing, alignment, typography, color, responsive layout, page structure. Read for any new page or when something "looks off".
 - `references/forms.md`: field layout, labels, validation timing, error messages, submit behavior, input types. Read for any form, including small ones in dialogs.
 - `references/data-display.md`: tables, lists, cards, pagination, sorting, filtering, search, empty states. Read for anything that renders a collection.

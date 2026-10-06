@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Heuristic UX scanner for React web code (Tailwind, shadcn/ui).
 // Usage: node ux-scan.mjs <dir-or-file> [--json]
+// Understands Next.js App Router route files (loading, error, not-found).
 // No dependencies. Findings are hints to verify, not verdicts.
 import fs from "node:fs";
 import path from "node:path";
@@ -62,12 +63,27 @@ const LINE_RULES = [
     msg: "Content revealed on hover only. It is unreachable by touch and keyboard; also reveal on focus or keep it visible." },
 ];
 
+// Next.js App Router. ctx = { appRoot, isPage, isClient, hasLoading, hasError }.
+// A server component inside a route folder is covered when loading.* or error.* sits in the
+// same folder or any parent route folder up to the app root.
+const NEXT_RULES = [
+  { id: "next-page-without-loading", sev: "medium",
+    test: (s, c) => c.appRoot && c.isPage && /export\s+default\s+async\s+function/.test(s) && !c.hasLoading && !/<Suspense\b/.test(s),
+    msg: "Async page with no loading.tsx above it and no Suspense. Navigation will feel frozen while it fetches." },
+  { id: "next-form-action-without-pending", sev: "high",
+    test: (s) => [...openTags(s)].some((t) => t.name === "form" && /\baction=\{/.test(t.attrs)) && !/useActionState|useFormStatus|useTransition|\bisPending\b|\bpending\b/.test(s),
+    msg: "Form submits to a Server Action but the file has no pending state. Use useActionState or useFormStatus so the button shows progress and cannot be double fired." },
+  { id: "next-use-client-page", sev: "low",
+    test: (s, c) => c.appRoot && c.isPageOrLayout && c.isClient,
+    msg: "\"use client\" at the top of a page or layout. Check that the whole route needs to be a client component; move the interactive part into a small component." },
+];
+
 const FILE_RULES = [
   { id: "async-without-loading", sev: "high",
-    test: (s) => ASYNC.test(s) && !/isLoading|isPending|isFetching|\bloading\b|Skeleton|Spinner|Suspense|status\s*===/.test(s),
+    test: (s, c) => !(c.appRoot && !c.isClient && (c.hasLoading || c.isPage)) && ASYNC.test(s) && !/isLoading|isPending|isFetching|\bloading\b|Skeleton|Spinner|Suspense|status\s*===/.test(s),
     msg: "Fetches data but shows no loading state." },
   { id: "async-without-error", sev: "high",
-    test: (s) => ASYNC.test(s) && !/isError|\berror\b|\bcatch\b|ErrorBoundary|onError/.test(s),
+    test: (s, c) => !(c.appRoot && !c.isClient && c.hasError) && ASYNC.test(s) && !/isError|\berror\b|\bcatch\b|ErrorBoundary|onError/.test(s),
     msg: "Fetches data but has no error handling the user can see." },
   { id: "collection-without-empty", sev: "medium",
     test: (s) => ASYNC.test(s) && MAPS_JSX.test(s) && !/\.length\s*(?:===|==|!==|<|>)|!\s*\w+(?:\?\.|\.)[\w.?]*length|total\s*(?:===|==)\s*0|<Empty|EmptyState|NoResults|isEmpty/.test(s),
@@ -131,8 +147,26 @@ function* openTags(src) {
 const has = (attrs, ...names) => names.some((n) => new RegExp(`(^|[\\s{])${n}\\b`).test(attrs));
 const cls = (attrs) => (attrs.match(/className=(?:"([^"]*)"|\{[^}]*?["'`]([^"'`]*)["'`])/) || []).slice(1).find(Boolean) || "";
 
+const CONV = ["tsx", "jsx", "js", "ts"];
+const hasFile = (dir, base) => CONV.some((e) => fs.existsSync(path.join(dir, `${base}.${e}`)));
+// nearest ancestor folder named "app" that has a root layout, or null
+function findAppRoot(file) {
+  for (let d = path.dirname(file); d !== path.dirname(d); d = path.dirname(d)) {
+    if (path.basename(d) === "app" && hasFile(d, "layout")) return d;
+  }
+  return null;
+}
+function hasUp(file, appRoot, base) {
+  for (let d = path.dirname(file); ; d = path.dirname(d)) {
+    if (hasFile(d, base)) return true;
+    if (d === appRoot || d === path.dirname(d)) return false;
+  }
+}
+const IS_CLIENT = /^\s*(?:(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/)\s*)*["']use client["']/;
+
 const files = fs.existsSync(root) && fs.statSync(root).isFile() ? [root] : walk(root);
 const findings = [];
+const appRoots = new Set();
 const add = (rule, file, line) => findings.push({ id: rule.id, severity: rule.sev, file: path.relative(process.cwd(), file), line, message: rule.msg });
 
 for (const file of files) {
@@ -151,9 +185,32 @@ for (const file of files) {
       if (r.re.test(text) && !(r.unless && r.unless.test(text))) add(r, file, i + 1);
     }
   });
-  for (const r of FILE_RULES) {
-    if (r.test(src)) add(r, file, 1);
+  const appRoot = findAppRoot(file);
+  const base = path.basename(file).replace(/\.[jt]sx?$/, "");
+  if (appRoot) appRoots.add(appRoot);
+  const ctx = {
+    appRoot,
+    isPage: base === "page",
+    isPageOrLayout: base === "page" || base === "layout",
+    isClient: IS_CLIENT.test(src),
+    hasLoading: appRoot ? hasUp(file, appRoot, "loading") : false,
+    hasError: appRoot ? hasUp(file, appRoot, "error") : false,
+  };
+  for (const r of NEXT_RULES) {
+    if (r.test(src, ctx)) add(r, file, 1);
   }
+  for (const r of FILE_RULES) {
+    if (r.test(src, ctx)) add(r, file, 1);
+  }
+}
+
+// project level: an App Router app with no error.* and no not-found.* anywhere
+const appFiles = [...appRoots].flatMap((r) => walk(r)).map((f) => path.basename(f));
+const isConv = (b) => appFiles.some((f) => f.startsWith(b + ".") && /\.[jt]sx?$/.test(f));
+if (appRoots.size && !isConv("error") && !isConv("not-found")) {
+  add({ id: "next-no-error-or-not-found", sev: "medium",
+    msg: "App Router app with no error.tsx and no not-found.tsx anywhere. Failures and unknown URLs fall back to the default framework pages." },
+  [...appRoots][0], 1);
 }
 
 const ORDER = ["high", "medium", "low"];

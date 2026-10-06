@@ -16,7 +16,7 @@ If the user gave a path or scope, audit only that. Otherwise audit the whole pro
 Read the nearest `package.json` for the audited path.
 
 - `react-native` or `expo` in dependencies: use the sibling skill `react-native-ux`.
-- `react-dom` in dependencies: use the sibling skill `mern-web-ux`.
+- `react-dom` or `next` in dependencies: use the sibling skill `mern-web-ux`. It covers Next.js projects.
 - A monorepo with both: find each package folder, then run the matching skill on each folder on its own. Give one report per folder.
 - Neither found: say so and ask which stack to use.
 

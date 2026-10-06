@@ -212,7 +212,7 @@ If `Empty` is not installed, build the same structure: centered block, optional 
 ## 8. Loading and refreshing collections
 
 - First load: skeleton rows or cards that match the real layout (same row height, same column widths), about 5 to 8 of them. This avoids layout shift when data arrives. Delay it by about 200ms so fast responses show no loader (see `actions-and-feedback.md`, section 2).
-- Refetch, page change, filter change: keep the old data visible and dim it (`opacity-60`), using `placeholderData: keepPreviousData` in TanStack Query. Add `aria-busy="true"` on the container.
+- Refetch, page change, filter change: keep the old data visible and dim it (`opacity-60`), using `placeholderData: keepPreviousData` in TanStack Query. In Next.js see `nextjs.md` sections 3 and 7. Add `aria-busy="true"` on the container.
 - Background refresh: no visible loading unless the data changes.
 - After a create, update, or delete: update the list immediately (optimistic update or cache invalidation). The user should never have to refresh to see their own change.
 - New item created: make it visible (scroll to it or put it first) and briefly highlight it.

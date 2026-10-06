@@ -12,7 +12,7 @@ UX skills for AI coding agents. They catch the problems that generated UI usuall
 
 ## Skills
 
-- `mern-web-ux`: UX rules and audit for React web apps (MERN, Tailwind, shadcn/ui).
+- `mern-web-ux`: UX rules and audit for React web apps (MERN and Next.js, Tailwind, shadcn/ui). Next.js App Router is supported, including route files, Server Actions, and URL state.
 - `react-native-ux`: UX rules and audit for React Native and Expo apps (NativeWind).
 - `ux-audit`: a dedicated audit command. It picks the right skill for your stack and runs its audit.
 
@@ -64,7 +64,7 @@ audit the UX
 audit the UX in src/pages/Checkout
 ```
 
-`ux-audit` reads `package.json`. `react-native` or `expo` uses `react-native-ux`. `react-dom` uses `mern-web-ux`. A monorepo with both gets one report per folder. It runs the scanner, reviews each screen, and writes a severity ranked report. It only reports. Ask for fixes if you want them.
+`ux-audit` reads `package.json`. `react-native` or `expo` uses `react-native-ux`. `react-dom` or `next` uses `mern-web-ux`. A monorepo with both gets one report per folder. It runs the scanner, reviews each screen, and writes a severity ranked report. It only reports. Ask for fixes if you want them.
 
 You can also run a scanner by hand:
 
