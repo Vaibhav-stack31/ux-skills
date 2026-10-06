@@ -1,0 +1,12 @@
+{
+  "name": "ux-skills-marketplace",
+  "description": "UX skills for web and mobile",
+  "owner": { "name": "Vaibhav Tiwari" },
+  "plugins": [
+    {
+      "name": "ux-skills",
+      "source": { "source": "github", "repo": "Vaibhav-stack31/ux-skills" },
+      "description": "UX rules and audits for MERN web apps and React Native apps"
+    }
+  ]
+}

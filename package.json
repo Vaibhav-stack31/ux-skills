@@ -1,0 +1,11 @@
+{
+  "name": "claude-ux-skills",
+  "version": "1.0.0",
+  "description": "UX quality skills for Claude Code: MERN web (Tailwind, shadcn/ui) and React Native (NativeWind).",
+  "type": "module",
+  "bin": { "claude-ux-skills": "bin/install.mjs" },
+  "files": [".claude-plugin", "skills", "bin", "README.md"],
+  "keywords": ["claude-code", "claude-skill", "claude-plugin", "ux", "react", "react-native"],
+  "license": "MIT",
+  "engines": { "node": ">=18" }
+}
