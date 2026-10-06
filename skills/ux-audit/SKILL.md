@@ -24,7 +24,7 @@ Read the nearest `package.json` for the audited path.
 
 All skills install side by side, so look for `../react-native-ux/` or `../mern-web-ux/` relative to this skill folder.
 
-If the folder is missing, stop. Tell the user which skill to install, for example `npx skills add Vaibhav-stack31/ux-skills` or `npx claude-ux-skills`.
+If the folder is missing, stop. Tell the user which skill to install, for example `npx skills add Vaibhav-stack31/ux-skills` or `npx Vaibhav-stack31/ux-skills`.
 
 ## 4. Follow the audit procedure
 

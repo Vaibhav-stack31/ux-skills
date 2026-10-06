@@ -36,13 +36,13 @@ claude plugin install ux-skills@ux-skills-marketplace
 Into the current project (`.claude/skills`):
 
 ```bash
-npx claude-ux-skills
+npx Vaibhav-stack31/ux-skills
 ```
 
 For every project (`~/.claude/skills`):
 
 ```bash
-npx claude-ux-skills --global
+npx Vaibhav-stack31/ux-skills --global
 ```
 
 Flags:
@@ -77,7 +77,7 @@ node skills/react-native-ux/scripts/ux-scan.mjs <path-to-app-src>
 
 - npx skills: run `npx skills add Vaibhav-stack31/ux-skills` again.
 - Plugin: `claude plugin marketplace update ux-skills-marketplace`, then `claude plugin update ux-skills@ux-skills-marketplace`.
-- npx installer: run `npx claude-ux-skills@latest` again. It replaces the old copy.
+- npx installer: run `npx Vaibhav-stack31/ux-skills` again. It replaces the old copy.
 
 ## Try it locally without installing
 

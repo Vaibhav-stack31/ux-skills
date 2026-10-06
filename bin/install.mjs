@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Copies the bundled skills into a Claude Code skills folder.
-//   npx claude-ux-skills            -> ./.claude/skills   (this project)
-//   npx claude-ux-skills --global   -> ~/.claude/skills   (all projects)
-//   npx claude-ux-skills --only web | app | audit
-//   npx claude-ux-skills --remove [--global]
-//   npx claude-ux-skills --quiet    (no banner)
+//   npx Vaibhav-stack31/ux-skills            -> ./.claude/skills   (this project)
+//   npx Vaibhav-stack31/ux-skills --global   -> ~/.claude/skills   (all projects)
+//   npx Vaibhav-stack31/ux-skills --only web | app | audit
+//   npx Vaibhav-stack31/ux-skills --remove [--global]
+//   npx Vaibhav-stack31/ux-skills --quiet    (no banner)
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -15,7 +15,7 @@ const flag = (name) => args.includes(name);
 const value = (name) => (args.includes(name) ? args[args.indexOf(name) + 1] : undefined);
 
 if (flag("--help") || flag("-h")) {
-  console.log("Usage: claude-ux-skills [--global] [--only web|app|audit] [--remove] [--quiet]");
+  console.log("Usage: npx Vaibhav-stack31/ux-skills [--global] [--only web|app|audit] [--remove] [--quiet]");
   process.exit(0);
 }
 
