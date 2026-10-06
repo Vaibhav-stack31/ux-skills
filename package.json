@@ -1,6 +1,6 @@
 {
   "name": "claude-ux-skills",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "UX quality skills for Claude Code: MERN web (Tailwind, shadcn/ui) and React Native (NativeWind).",
   "type": "module",
   "bin": { "claude-ux-skills": "bin/install.mjs" },

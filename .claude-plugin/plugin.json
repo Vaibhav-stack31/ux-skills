@@ -1,7 +1,7 @@
 {
   "name": "ux-skills",
-  "description": "UX quality skills for Claude Code: one for React web apps on the MERN stack (Tailwind, shadcn/ui) and one for React Native apps (NativeWind). Build mode and audit mode.",
-  "version": "1.0.0",
+  "description": "UX quality skills for Claude Code: one for React web apps on the MERN stack (Tailwind, shadcn/ui) and one for React Native apps (NativeWind). Build mode and audit mode, plus a dedicated audit skill.",
+  "version": "1.1.0",
   "author": { "name": "Vaibhav Tiwari" },
   "license": "MIT",
   "keywords": ["ux", "ui", "react", "react-native", "tailwind", "shadcn", "nativewind", "accessibility"]
