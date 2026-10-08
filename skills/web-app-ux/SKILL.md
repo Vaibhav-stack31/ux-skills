@@ -54,7 +54,7 @@ These apply to every screen. Each one targets a failure that generated UI makes 
 7. **Keyboard and screen reader operable.** Real `<button>` and `<a>` elements, visible focus, labels on every input, accessible names on icon buttons.
 8. **Responsive from 360px up.** Design mobile first. Nothing scrolls sideways except content inside an intentional scroll container.
 9. **Shareable state lives in the URL.** Filters, search, sort, page, and active tab should survive refresh, back, and link sharing.
-10. **Restraint.** No gradients, glass effects, emoji, pulsing badges, or landing page heroes on a working screen unless the user asked for them. Decoration that does not help the task competes with the content that does.
+10. **Restraint.** No gradients, glass effects, emoji, pulsing badges, or landing page heroes on a working screen unless the user asked for them. A scrim behind text on an image is not decoration. Decoration that does not help the task competes with the content that does.
 
 Write copy in plain language: buttons are a verb plus a noun ("Create project", not "Submit"), and error messages say what happened and what to do next.
 
@@ -63,7 +63,7 @@ Write copy in plain language: buttons are a verb plus a noun ("Create project", 
 Read only what the task needs. Each file is self contained.
 
 - `references/nextjs.md`: how the rules are met in Next.js (route files for states, Server Actions for forms, URL state, auth). Read this first in any Next.js project.
-- `references/layout-and-visual.md`: spacing, alignment, typography, color, responsive layout, page structure. Read for any new page or when something "looks off".
+- `references/layout-and-visual.md`: spacing, alignment, typography, color, depth and dark mode, signifiers (what looks clickable), page structure, responsive layout, text over images. Read for any new page or when something "looks off".
 - `references/forms.md`: field layout, labels, validation timing, error messages, submit behavior, input types. Read for any form, including small ones in dialogs.
 - `references/data-display.md`: tables, lists, cards, pagination, sorting, filtering, search, empty states. Read for anything that renders a collection.
 - `references/actions-and-feedback.md`: buttons, loading patterns, toasts, dialogs, destructive actions, undo, error display. Read for any interactive flow.
@@ -88,6 +88,8 @@ Check every item against the code before saying the work is complete. If an item
 - [ ] Submit and mutation buttons show pending state and cannot be double fired
 - [ ] Success is confirmed (toast, inline message, or visible change) and the user lands somewhere sensible
 - [ ] Destructive actions use a confirmation with specific wording, or provide undo
+- [ ] Buttons show distinct hover, active, focus visible, disabled, and pending states
+- [ ] Clickable things look clickable (button styling, underlined links, hover and pointer on clickable rows); static things do not
 
 **Forms**
 - [ ] Every input has a visible label that is linked to it
@@ -97,6 +99,9 @@ Check every item against the code before saying the work is complete. If an item
 **Layout**
 - [ ] Shared left edge; numbers right aligned with `tabular-nums`
 - [ ] Spacing and colors come from tokens; no arbitrary values
+- [ ] One sans-serif font family; body text at about 1.5 line height, tighter only on headings; tracking tightened only on large headings
+- [ ] Raised surfaces use lighter tokens (`bg-card`, `bg-popover`) and a border, so depth shows in dark mode; light mode shadows are soft
+- [ ] Text over an image has a gradient scrim or blurred backing and passes 4.5:1
 - [ ] Works at 360px, 768px, and 1280px with no page level horizontal scroll
 
 **Access**

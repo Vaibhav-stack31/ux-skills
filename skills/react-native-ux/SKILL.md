@@ -51,7 +51,7 @@ If the answers depend on product decisions you cannot infer, ask the user instea
 7. **Primary actions live in the thumb zone** (lower half of the screen). The top corners are the hardest area to reach.
 8. **Follow platform conventions**: native stack navigation and gestures, bottom tabs for top level destinations, system back behavior, platform appropriate pickers and sheets.
 9. **Support the user's settings**: font scaling, dark mode, reduced motion, and screen readers (VoiceOver and TalkBack).
-10. **Restraint.** No gradients, glass effects, emoji icons, or decorative animation unless asked. A phone screen has no room for content that does not help the task.
+10. **Restraint.** No gradients, glass effects, emoji icons, or decorative animation unless asked. A scrim behind text on an image is not decoration. A phone screen has no room for content that does not help the task.
 
 Write copy in plain language: buttons are a verb plus a noun ("Add address"), and errors say what happened and what to do next. Mobile copy is shorter than web copy.
 
@@ -59,7 +59,7 @@ Write copy in plain language: buttons are a verb plus a noun ("Add address"), an
 
 Read only what the task needs.
 
-- `references/layout-and-touch.md`: safe areas, screen structure, spacing, alignment, typography and font scaling, color and dark mode, touch targets, thumb zone, NativeWind specifics. Read for any new screen or when something "looks off".
+- `references/layout-and-touch.md`: safe areas, screen structure, spacing, alignment, typography and font scaling, color, depth, and dark mode, touch targets, thumb zone, NativeWind specifics, signifiers, text over images. Read for any new screen or when something "looks off".
 - `references/lists-and-data.md`: list items, FlashList and FlatList setup, pull to refresh, pagination, tables on mobile, cards, search and filters, empty states, images.
 - `references/forms-and-keyboard.md`: inputs, keyboard types and autofill, keyboard avoidance, validation, submitting, pickers.
 - `references/navigation-and-gestures.md`: stacks, tabs, headers, modals, bottom sheets, back behavior, gestures, haptics, deep links.
@@ -76,10 +76,15 @@ Check every item against the code before saying the work is complete.
 - [ ] Consistent screen padding and one left edge; spacing from the scale
 - [ ] Works on a small phone (about 360 wide) and does not stretch awkwardly on a tablet
 - [ ] Text still fits at large system font sizes; no fixed heights on text containers
+- [ ] One sans-serif font family; body line height about 1.3 to 1.5; letter spacing tightened only on large headings
+- [ ] Raised surfaces use lighter tokens and a border, so depth shows in dark mode; light mode shadows are soft
+- [ ] Text over an image has a gradient scrim or blurred backing and passes 4.5:1
 
 **Touch**
 - [ ] Every target at least 48 by 48 including `hitSlop`
 - [ ] Pressed state on every pressable; primary action reachable by thumb
+- [ ] Buttons show distinct pressed, disabled, pending, and selected states
+- [ ] Pressable things look pressable (button shape, accent links, chevrons on rows); static things do not
 
 **States**
 - [ ] First load shows a skeleton that matches the layout, delayed about 200ms; refreshes keep the old content visible

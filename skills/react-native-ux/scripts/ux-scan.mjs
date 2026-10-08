@@ -18,6 +18,14 @@ const FILL = /StyleSheet\.absoluteFill(?:Object)?\b|\babsolute\b[^"'`\n]*\binset
 const BACKDROP_COLOR = /\bbg-(?:black|background|foreground)\/\d+|rgba\(\s*0\s*,\s*0\s*,\s*0\s*,|backgroundColor:\s*["']#000(?:000)?[0-9a-fA-F]{0,2}["']/;
 const MODAL_LIKE = /\b(?!StyleSheet\b)\w*(?:Modal|Dialog|Sheet|Backdrop|Overlay|Popup)\b|\b(?:isOpen|isVisible|visible|open)\s*&&/;
 const MODAL_LIB = /<Modal[\s>]|@gorhom\/bottom-sheet|react-native-modal|react-native-actions-sheet|presentation:\s*["'](?:modal|transparentModal|formSheet|containedModal)/;
+// Signifiers: a wrapping pressable or link makes its child pressable.
+const WRAPPED = /<(?:Pressable|TouchableOpacity|TouchableHighlight|Link|Button)\b[^<]*>\s*$/;
+const isWrapped = (src, idx) => WRAPPED.test(src.slice(Math.max(0, idx - 300), idx));
+const SCRIM = /LinearGradient|BlurView|bg-black\/\d|rgba\(\s*0\s*,\s*0\s*,\s*0\s*,/;
+// lineHeight at or below fontSize, or negative letterSpacing on text at 16 or smaller, in one style object
+const num = (t, k) => { const m = t.match(new RegExp(`${k}:\\s*(-?\\d+(?:\\.\\d+)?)`)); return m ? Number(m[1]) : null; };
+const tightStyleLeading = { test: (t) => { const f = num(t, "fontSize"), l = num(t, "lineHeight"); return f !== null && l !== null && l <= f && f < 24; } };
+const tightStyleTracking = { test: (t) => { const f = num(t, "fontSize"), ls = num(t, "letterSpacing"); return f !== null && ls !== null && ls < 0 && f <= 16; } };
 const overlayIndex = (s) => (BACKDROP_COLOR.test(s) && MODAL_LIKE.test(s) && !MODAL_LIB.test(s) ? s.search(FILL) : -1);
 
 const TAG_RULES = [
@@ -60,6 +68,12 @@ const TAG_RULES = [
   { id: "image-without-size", sev: "low", tags: ["Image"],
     test: (a) => !has(a, "style", "className") && !SPREAD.test(a),
     msg: "Image without dimensions. Set width and height or an aspect ratio." },
+  { id: "disabled-without-style", sev: "low", tags: PRESSABLES,
+    test: (a) => has(a, "disabled") && !/disabled:|opacity:|\bpressed\b|\bdisabled\s*[?&]/.test(a) && !SPREAD.test(a),
+    msg: "Pressable can be disabled but has no disabled look. Add disabled:opacity-50 (or a style based on disabled) and accessibilityState." },
+  { id: "underline-not-pressable", sev: "low", tags: ["Text"],
+    test: (a, _n, src, idx) => /(?:^|[\s"'`])underline(?=[\s"'`])|textDecorationLine:\s*["']underline/.test(a) && !has(a, "onPress") && !SPREAD.test(a) && !isWrapped(src, idx),
+    msg: "Underlined text that is not pressable looks like a link. Remove the underline or make it pressable." },
   { id: "modal-without-request-close", sev: "medium", tags: ["Modal"],
     test: (a, _n, src) => /import\s*\{[^}]*\bModal\b[^}]*\}\s*from\s*["']react-native["']/.test(src) && !has(a, "onRequestClose") && !SPREAD.test(a),
     msg: "Modal without onRequestClose. Android back will not close it." },
@@ -69,6 +83,18 @@ const TAG_RULES = [
 ];
 
 const LINE_RULES = [
+  { id: "tight-body-leading", sev: "medium", re: /(?=.*\bleading-(?:none|tight)\b)(?=.*\btext-(?:xs|sm|base)\b)/,
+    msg: "Tight line height on body sized text. Lines collide and descenders clip on Android; keep body text at 1.3 to 1.5 times the size." },
+  { id: "tight-body-leading", sev: "medium", re: tightStyleLeading,
+    msg: "lineHeight at or below fontSize. Lines collide and descenders clip on Android; keep body text at 1.3 to 1.5 times the size." },
+  { id: "small-text-tight-tracking", sev: "low", re: /(?=.*\btracking-(?:tight|tighter)\b)(?=.*\btext-(?:xs|sm|base)\b)/,
+    msg: "Letter spacing tightened on small text. Tighten only large headings; leave body text at the default." },
+  { id: "small-text-tight-tracking", sev: "low", re: tightStyleTracking,
+    msg: "Negative letterSpacing on text at 16 or smaller. Tighten only large headings; leave body text at the default." },
+  { id: "harsh-shadow", sev: "low", re: /shadowOpacity:\s*(?:0?\.[3-9]|1(?:\.0+)?)\b|shadowRadius:\s*0\b|\bshadow-(?:xl|2xl)\b|elevation[:=]\s*\{?\s*(?:[6-9]|\d\d)\b/,
+    msg: "Heavy or hard shadow. Keep shadows soft (opacity 0.05 to 0.15, radius 4 to 12, elevation 1 to 4) and use them only for things that float." },
+  { id: "raised-surface-on-background", sev: "medium", re: /(?=.*\bbg-background\b)(?=.*(?:\bshadow(?:-(?:sm|md|lg|xl|2xl))?(?=["'`\s])|\belevation\b))/,
+    msg: "Raised surface uses bg-background with a shadow. In dark mode the shadow is invisible and the surface blends in; use bg-card and border-border." },
   { id: "backdrop-passes-touches", sev: "high", re: /(?=.*pointerEvents=\{?["'](?:none|box-none)["'])(?=.*[Bb]ackdrop)/,
     msg: "Backdrop with pointerEvents none or box-none. Taps go through to the screen behind the overlay." },
   { id: "font-scaling-disabled", sev: "high", re: /allowFontScaling=\{\s*false\s*\}|allowFontScaling\s*=\s*false/,
@@ -131,6 +157,10 @@ const FILE_RULES = [
     test: (s) => overlayIndex(s) !== -1 && !/BackHandler|useBackHandler|onRequestClose/.test(s),
     at: (s) => lineAt(s, overlayIndex(s)),
     msg: "Hand built overlay with no BackHandler. Android back will leave the screen instead of closing the overlay." },
+  { id: "text-over-image-no-scrim", sev: "medium",
+    test: (s) => (/<ImageBackground\b/.test(s) || (/<Image\b/.test(s) && /absolute/.test(s))) && /\btext-white\b|color:\s*["'](?:#fff(?:fff)?|white)["']/i.test(s) && !SCRIM.test(s),
+    at: (s) => lineAt(s, s.search(/\btext-white\b|color:\s*["'](?:#fff(?:fff)?|white)["']/i)),
+    msg: "White text over an image with no scrim. Add a LinearGradient from transparent to about 70% black, or a BlurView, so it stays readable on any photo." },
   { id: "no-safe-area", sev: "medium",
     test: (s) => /headerShown:\s*false/.test(s) && !/useSafeAreaInsets|SafeAreaView|-safe\b/.test(s),
     msg: "Header hidden but no safe area handling in this file. Content may sit under the status bar or notch." },
@@ -186,6 +216,7 @@ const cls = (attrs) => (attrs.match(/className=(?:"([^"]*)"|\{[^}]*?["'`]([^"'`]
 
 const files = fs.existsSync(root) && fs.statSync(root).isFile() ? [root] : walk(root);
 const findings = [];
+const fontFamilies = new Map();
 const add = (rule, file, line) => findings.push({ id: rule.id, severity: rule.sev, file: path.relative(process.cwd(), file), line, message: rule.msg });
 
 for (const file of files) {
@@ -195,7 +226,7 @@ for (const file of files) {
 
   for (const t of openTags(src)) {
     for (const r of TAG_RULES) {
-      if (r.tags.includes(t.name) && r.test(t.attrs, t.name, src)) add(r, file, lineAt(src, t.index));
+      if (r.tags.includes(t.name) && r.test(t.attrs, t.name, src, t.index)) add(r, file, lineAt(src, t.index));
     }
   }
   const lines = src.split("\n");
@@ -207,6 +238,18 @@ for (const file of files) {
   for (const r of FILE_RULES) {
     if (r.test(src)) add(r, file, r.at ? r.at(src) : 1);
   }
+  for (const m of src.matchAll(/fontFamily:\s*["']([^"']+)["']|from\s*["']@expo-google-fonts\/([\w-]+)["']/g)) {
+    const name = (m[1] || m[2]).split(/[_-]/)[0].toLowerCase();
+    if (name && !/mono|code|system|^sans-serif$/.test(name) && !fontFamilies.has(name)) fontFamilies.set(name, { file, line: lineAt(src, m.index) });
+  }
+}
+
+// project level: more than one non monospace font family
+if (fontFamilies.size > 1) {
+  const [, second] = [...fontFamilies.values()];
+  add({ id: "multiple-font-families", sev: "medium",
+    msg: `More than one font family used (${[...fontFamilies.keys()].join(", ")}). Use one sans-serif family for the app, plus a monospace for code.` },
+  second.file, second.line);
 }
 
 const ORDER = ["high", "medium", "low"];

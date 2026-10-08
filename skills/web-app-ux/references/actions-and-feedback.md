@@ -39,7 +39,17 @@ One filled button per view. In a dialog, the dialog counts as its own view.
 - Do not use a button for navigation or a link for an action. Navigation is an `<a>` or router `Link` (with `asChild` or `render` on the shadcn `Button`); actions are `<button>`.
 
 ### States
-Every button needs: default, hover, focus visible, active, disabled, and pending. shadcn provides the first five. You add pending:
+Every button needs: default, hover, focus visible, active, disabled, and pending. shadcn provides the first five. You add pending.
+
+Each state must look different from the others:
+- **Hover**: a small background shift (`hover:bg-primary/90`, `hover:bg-accent`). Hover never reveals the only copy of an action.
+- **Focus visible**: a ring (`focus-visible:ring-2 focus-visible:ring-ring`), shown for keyboard focus only.
+- **Active**: pressed slightly further than hover, so a click feels registered.
+- **Disabled**: `disabled:opacity-50 disabled:pointer-events-none`, plus a reason nearby (see section 7).
+- **Pending**: spinner and progressive label, as below.
+
+A custom styled `<button>` or `role="button"` element that is not the project's `Button` must define hover, focus visible, and disabled styles itself.
+
 
 ```tsx
 <Button disabled={isPending} onClick={save}>

@@ -38,6 +38,7 @@ Every pressable responds visibly the moment it is touched. Without this the app 
 - NativeWind: `active:opacity-80` for filled buttons, `active:bg-muted` for rows and ghost buttons.
 - Android: `android_ripple={{ color: "rgba(0,0,0,0.1)" }}` gives the native ripple. Add `overflow-hidden` on rounded containers so the ripple is clipped.
 - Selected and toggled states are distinct from pressed states and persist.
+- The full set every button needs: default, pressed, focused (external keyboards, tablets, and web targets), disabled, pending, and selected where it toggles. Each must look different. Disabled is `opacity-50` (or the theme's disabled colors) plus `accessibilityState={{ disabled: true }}`; NativeWind's `disabled:` variant works on `Pressable`.
 - Feedback appears within 100ms. If the action then takes time, switch to a pending state.
 
 ## 3. Loading patterns

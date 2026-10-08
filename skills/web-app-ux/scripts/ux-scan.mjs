@@ -9,6 +9,7 @@ import path from "node:path";
 const SKIP_FILE = /components[\\/]ui[\\/]/; // vendored shadcn primitives
 
 const ASYNC = /\buse(Query|SWR|InfiniteQuery|SuspenseQuery)\s*[(<]|\bfetch\(|\baxios\b|\bapi\s*[.(<]/;
+const SPREAD = /\{\s*\.\.\./;
 const MAPS_JSX = /\.map\(\s*(?:async\s*)?\(?[^)]*\)?\s*=>\s*[({]?\s*(?:return\s*)?</;
 
 // Hand built modals: a dialog role, a native <dialog>, or a class string with fixed, inset-0, and a backdrop color.
@@ -24,6 +25,11 @@ const overlayIndex = (s) => {
 const hasCustomOverlay = (s) => overlayIndex(s) !== -1;
 const MODAL_LIB = /from\s+["'][^"']*(?:components\/ui\/(?:dialog|alert-dialog|sheet|drawer)|@radix-ui\/react-(?:alert-)?dialog|@base-ui[^"']*|@headlessui\/react|vaul|react-aria(?:-components)?|@mui\/material[^"']*|@chakra-ui[^"']*|@mantine[^"']*|antd)["']/;
 const BACKGROUND_BLOCKED = /\binert\b|\.showModal\(|FocusTrap|focus-trap|FocusLock|focus-lock|FocusScope|useFocusTrap/;
+// Signifiers: a wrapping link or control makes its child clickable.
+const WRAPPED = /<(?:Link|a|button|label|Button|DropdownMenuItem|ContextMenuItem|CommandItem|SelectItem|DialogTrigger|SheetTrigger|PopoverTrigger|DropdownMenuTrigger|TooltipTrigger)\b[^<]*>\s*$/;
+const isWrapped = (src, idx) => WRAPPED.test(src.slice(Math.max(0, idx - 300), idx));
+const LOOKS_CLICKABLE = /(?:^|[\s"'`])(?:hover:(?:bg|underline|shadow|text|border)-?[\w/-]*|cursor-pointer|underline)(?=[\s"'`])/;
+const SCRIM = /from-black\/|via-black\/|bg-black\/\d|from-background|bg-background\/\d|bg-gradient-to-|bg-linear-to-|backdrop-blur/;
 const SCROLL_LOCKED = /document\.(?:body|documentElement)\.style\.overflow|document\.(?:body|documentElement)\.classList\.(?:add|toggle)\([^)]*overflow-hidden|RemoveScroll|remove-scroll|useScrollLock|useLockBodyScroll|useBodyScrollLock|body-scroll-lock|disableBodyScroll|lockScroll|dialog:modal|dialog\[open\]/;
 
 const TAG_RULES = [
@@ -42,6 +48,15 @@ const TAG_RULES = [
   { id: "anchor-without-href", sev: "medium", tags: ["a"],
     test: (a) => (!has(a, "href") && !/\{\s*\.\.\./.test(a)) || /href=["']#["']/.test(a),
     msg: "Anchor without a real href. Use a button for actions and a real URL for navigation." },
+  { id: "button-missing-states", sev: "medium", tags: ["button", "div", "span", "a"],
+    test: (a, n) => (n === "button" || /role=["']button["']/.test(a)) && /className=/.test(a) && !SPREAD.test(a) && (!/\bhover:/.test(a) || !/\bfocus(?:-visible)?:/.test(a)),
+    msg: "Custom styled button with no hover or focus-visible style. Use the project's Button, or give it distinct hover, active, focus-visible, and disabled styles." },
+  { id: "clickable-without-pointer", sev: "low", tags: ["tr", "TableRow", "Card", "li", "div"],
+    test: (a, n) => has(a, "onClick") && (n !== "div" || /role=["']button["']/.test(a)) && !/cursor-pointer/.test(a),
+    msg: "Clickable row, card, or item with no cursor-pointer. Add it, plus a hover background, so it reads as clickable." },
+  { id: "looks-clickable-static", sev: "low", tags: ["div", "span", "p", "li", "Card", "Badge", "tr", "TableRow", "img", "h1", "h2", "h3", "h4"],
+    test: (a, _n, src, idx) => LOOKS_CLICKABLE.test(a) && !has(a, "onClick", "onKeyDown", "onSelect", "href", "role", "asChild", "tabIndex") && !SPREAD.test(a) && !isWrapped(src, idx),
+    msg: "Looks clickable (hover effect, pointer cursor, or underline) but has no click handler and is not inside a link or button. Remove the cue or make it interactive." },
   { id: "input-without-label", sev: "medium", tags: ["input", "Input", "textarea", "Textarea"],
     test: (a) => !has(a, "id", "aria-label", "aria-labelledby") && !/\{\s*\.\.\./.test(a) && !/type=["'](hidden|submit|button|checkbox|radio|file)["']/.test(a),
     msg: "Input with no id or aria-label, so it is probably not linked to a visible label." },
@@ -54,6 +69,18 @@ const TAG_RULES = [
 ];
 
 const LINE_RULES = [
+  { id: "tight-body-leading", sev: "medium", re: /<p\b[^>]*\bleading-(?:none|tight|snug|\[1(?:\.[0-2]\d*)?\])(?=[\s"'`\]])/,
+    msg: "Tight line height on paragraph text. Keep body text at about 1.5 (the Tailwind default) and reserve tight leading for headings." },
+  { id: "small-text-tight-tracking", sev: "low", re: /(?=.*\btracking-(?:tight|tighter|\[-))(?=.*\btext-(?:xs|sm|base)\b)/, unless: /\btext-(?:lg|[2-9]?xl)\b/,
+    msg: "Letter spacing tightened on small text. Tighten only large headings (text-2xl and up); leave body text at the default." },
+  { id: "extra-font-family", sev: "low", re: /\bfont-serif\b|\bfont-\[['"]?[A-Za-z]|fontFamily:\s*["'`](?!var\(|inherit|ui-monospace|monospace)/,
+    msg: "Font family set on a single element. Use one sans-serif family set once as font-sans, plus font-mono for code." },
+  { id: "harsh-shadow", sev: "low", re: /\bshadow-(?:xl|2xl)\b|\bshadow-(?:primary|(?:red|blue|green|purple|indigo|pink|violet|emerald|amber|yellow|orange|teal|cyan|sky|rose|fuchsia|lime)-\d{2,3})\b|\bshadow-\[-?\d+(?:px)?_-?\d+(?:px)?_0(?:px)?[_\]]/, unless: /Dialog|Popover|Dropdown|Menu|Sheet|Tooltip|Toast|\bfixed\b/,
+    msg: "Heavy, hard, or colored shadow. Keep shadows soft: shadow-sm on cards, shadow-md or shadow-lg only for things that float, never colored glows." },
+  { id: "raised-surface-on-background", sev: "medium", re: /(?=.*\bbg-background\b)(?=.*\bshadow-(?:md|lg|xl|2xl)\b)/, unless: /\bdark:bg-/,
+    msg: "Raised surface uses bg-background with a shadow. In dark mode the shadow is invisible and the surface blends into the page; use bg-card or bg-popover and a border." },
+  { id: "dark-mode-shadow", sev: "low", re: /\bdark:shadow-(?!none\b)/,
+    msg: "Shadow added for dark mode. Shadows barely show on dark backgrounds; show depth with a lighter surface token and a border instead." },
   { id: "focus-removed", sev: "high", re: /\boutline-none\b|outline:\s*(none|0)\b/, unless: /focus-visible:|focus:ring|focus:outline|focus-within:/,
     msg: "Focus outline removed with no visible replacement on the same element." },
   { id: "positive-tabindex", sev: "medium", re: /tabIndex=\{?["']?[1-9]/,
@@ -72,7 +99,7 @@ const LINE_RULES = [
     msg: "Hard coded hex color. Use a semantic token so themes and dark mode work." },
   { id: "raw-palette-color", sev: "low", re: /\b(?:bg|text|border)-(?:red|blue|green|purple|indigo|pink|violet|emerald|amber|yellow|orange|teal|cyan|sky|rose|fuchsia|lime)-\d{2,3}\b/,
     msg: "Raw palette color. In a tokenized project use semantic tokens (primary, destructive, muted)." },
-  { id: "decoration", sev: "low", re: /\bbg-(?:gradient|linear)-to-|\bbackdrop-blur|\banimate-(?:pulse|bounce|ping)\b/, unless: /Skeleton|skeleton/,
+  { id: "decoration", sev: "low", re: /\bbg-(?:gradient|linear)-to-|\bbackdrop-blur|\banimate-(?:pulse|bounce|ping)\b/, unless: /Skeleton|skeleton|from-black\/|via-black\/|bg-black\/\d/,
     msg: "Decorative effect (gradient, blur, or looping animation). Keep it only if it serves the task." },
   { id: "hover-only", sev: "medium", re: /\b(?:hidden|invisible|opacity-0)\b[^"'`]*\bgroup-hover:(?:block|flex|inline-flex|visible|opacity-100)\b/, unless: /group-focus-within:|focus-within:|focus:/,
     msg: "Content revealed on hover only. It is unreachable by touch and keyboard; also reveal on focus or keep it visible." },
@@ -117,6 +144,10 @@ const FILE_RULES = [
     test: (s) => (hasCustomOverlay(s) || /\.showModal\(/.test(s)) && !MODAL_LIB.test(s) && !SCROLL_LOCKED.test(s),
     at: (s) => lineAt(s, Math.max(0, overlayIndex(s), s.search(/\.showModal\(/))),
     msg: "Hand built modal with no scroll lock. The page behind it still scrolls. Use the project's Dialog, or lock body scroll while open and restore it on close." },
+  { id: "text-over-image-no-scrim", sev: "medium",
+    test: (s) => /<(?:img|Image)\b/.test(s) && /\babsolute\b/.test(s) && /\btext-white\b/.test(s) && !SCRIM.test(s),
+    at: (s) => lineAt(s, s.search(/\btext-white\b/)),
+    msg: "White text positioned over an image with no scrim. Add a gradient scrim (from-black/70 to-transparent) or a blurred backing so it stays readable on any photo." },
   { id: "effect-fetching", sev: "low",
     test: (s) => /useEffect\(/.test(s) && /\bfetch\(|\baxios\b/.test(s) && !/AbortController|signal/.test(s),
     msg: "Fetching in useEffect without cancellation. Stale responses can overwrite newer ones; prefer the project's query library." },
@@ -190,6 +221,7 @@ const IS_CLIENT = /^\s*(?:(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/)\s*)*["']use client["
 const files = fs.existsSync(root) && fs.statSync(root).isFile() ? [root] : walk(root);
 const findings = [];
 const appRoots = new Set();
+const fontFamilies = new Map();
 const add = (rule, file, line) => findings.push({ id: rule.id, severity: rule.sev, file: path.relative(process.cwd(), file), line, message: rule.msg });
 
 for (const file of files) {
@@ -199,7 +231,7 @@ for (const file of files) {
 
   for (const t of openTags(src)) {
     for (const r of TAG_RULES) {
-      if (r.tags.includes(t.name) && r.test(t.attrs, t.name, src)) add(r, file, lineAt(src, t.index));
+      if (r.tags.includes(t.name) && r.test(t.attrs, t.name, src, t.index)) add(r, file, lineAt(src, t.index));
     }
   }
   const lines = src.split("\n");
@@ -225,6 +257,19 @@ for (const file of files) {
   for (const r of FILE_RULES) {
     if (r.test(src, ctx)) add(r, file, r.at ? r.at(src) : 1);
   }
+  for (const m of src.matchAll(/import\s*\{([^}]+)\}\s*from\s*["']next\/font\/google["']|from\s*["']@fontsource(?:-variable)?\/([\w-]+)/g)) {
+    for (const name of (m[1] || m[2]).split(",").map((x) => x.trim().split(/\s+as\s+/)[0].replace(/_/g, " ").toLowerCase()).filter(Boolean)) {
+      if (!/mono|code/.test(name) && !fontFamilies.has(name)) fontFamilies.set(name, { file, line: lineAt(src, m.index) });
+    }
+  }
+}
+
+// project level: more than one non monospace font family
+if (fontFamilies.size > 1) {
+  const [, second] = [...fontFamilies.values()];
+  add({ id: "multiple-font-families", sev: "medium",
+    msg: `More than one font family loaded (${[...fontFamilies.keys()].join(", ")}). Use one sans-serif family for the interface, plus a monospace for code.` },
+  second.file, second.line);
 }
 
 // project level: an App Router app with no error.* and no not-found.* anywhere

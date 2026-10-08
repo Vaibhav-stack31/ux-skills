@@ -5,10 +5,13 @@
 2. Alignment
 3. Typography
 4. Color
-5. Page structure
-6. Responsive behavior
-7. Overflow and long content
-8. Things to avoid
+5. Depth, shadows, and dark mode
+6. Signifiers: what looks clickable
+7. Page structure
+8. Responsive behavior
+9. Overflow and long content
+10. Text over images
+11. Things to avoid
 
 ## 1. Spacing
 
@@ -40,6 +43,8 @@ Padding inside containers: cards and panels `p-4` on mobile, `p-6` from `md` up.
 
 ## 3. Typography
 
+One font family for the whole interface: a sans-serif, set once as the project's `font-sans` (the system stack, Inter, Geist, or the brand font). The only second family is `font-mono` for code, ids, and tabular figures that need it. Do not add a serif or display font to app screens, and do not set fonts per component. Hierarchy comes from size and weight, not from switching typefaces.
+
 Limit the set. A typical app screen needs four sizes and two weights:
 
 - `text-2xl font-semibold tracking-tight`: page title (one `h1` per page)
@@ -57,6 +62,12 @@ Rules:
 - Sentence case for headings, buttons, and labels ("Create project"). Avoid ALL CAPS except very short overline labels with letter spacing.
 - Use `font-medium` for emphasis in UI. Reserve `font-bold` for rare cases.
 
+Line height and letter spacing:
+- Body and UI text: about 1.5 times the size. Tailwind's defaults (`text-sm` with 20px, `text-base` with 24px) are right; keep them. Long reading content can go to `leading-relaxed`.
+- Headings: tighter, about 1.1 to 1.3 (`leading-tight` or `leading-snug`), because large text with body line height looks loose and disconnected.
+- Never use `leading-none`, `leading-tight`, or `leading-snug` on paragraphs or multi line body text. Lines collide and become hard to read.
+- Letter spacing: tighten large headings slightly (`tracking-tight` from `text-2xl` up). Leave body text at the default. Widen only short uppercase labels (`tracking-wide`). Never tighten text at `text-base` or smaller.
+
 ## 4. Color
 
 - Use semantic tokens: `bg-background`, `bg-card`, `bg-muted`, `text-foreground`, `text-muted-foreground`, `border`, `bg-primary text-primary-foreground`, `bg-destructive`, `ring`. They adapt to dark mode and to theme changes. Raw palette classes (`bg-blue-500`, `text-gray-400`) do not.
@@ -66,10 +77,42 @@ Rules:
 - Do not use opacity to make text lighter over varying backgrounds; contrast becomes unpredictable.
 - If the project supports dark mode, every new color must work in both. Tokens make this automatic.
 - Borders and dividers: one border color, 1px. Prefer spacing over lines; add a divider only when spacing alone does not separate groups.
-- Shadows: one or two elevation levels. Use shadow for things that float (popovers, dialogs, dropdowns), not for every card.
 - Radius: use the project's `rounded-*` token consistently. A nested element's radius should be smaller than its container's.
 
-## 5. Page structure
+## 5. Depth, shadows, and dark mode
+
+Elevation tells the user what sits on top of what. Use at most three levels: the page, surfaces on the page (cards, panels), and things that float (popovers, dropdowns, dialogs).
+
+Light mode:
+- Shadows are soft and quiet: small offset, generous blur, low opacity. `shadow-sm` for a card that needs lift, `shadow-md` or `shadow-lg` only for things that float. Most cards need a border, not a shadow.
+- Pair a shadow with a 1px `border`. The border defines the edge; the shadow only hints at height.
+- No hard shadows (zero blur, high opacity) and no colored or glowing shadows (`shadow-primary`, `shadow-blue-500/50`).
+
+Dark mode:
+- Shadows are nearly invisible on a dark background, so they cannot carry depth. Show elevation with lighter surfaces instead: each level up is a step lighter (`bg-background`, then `bg-card`, then `bg-popover`).
+- Give raised surfaces a subtle 1px border (the `border` token) so edges stay visible.
+- A raised surface must never use `bg-background`, or it disappears into the page in dark mode.
+- Do not brighten shadows or add glows to compensate. Check every new surface in both themes.
+
+## 6. Signifiers: what looks clickable
+
+Users decide what is interactive from how it looks. The look must match the behavior in both directions.
+
+Things that are clickable must look clickable:
+- Buttons look like buttons (one of the `Button` variants), not like plain text.
+- Links inside text are underlined, or use the link color with an underline on hover and focus. Color alone is not enough.
+- Clickable rows and cards show a hover background (`hover:bg-muted/50`), `cursor-pointer`, and a visible focus ring, and where they open something, a chevron or an explicit "View" action.
+- Tailwind v4 no longer sets `cursor: pointer` on buttons. If the project wants it, add it once in the base layer for `button:not(:disabled)` and `[role="button"]`, not per component.
+- The current page, the selected tab, and the selected row are visibly marked, not just hovered.
+- Icon only controls get a tooltip that names the action.
+
+Things that are not clickable must not look clickable:
+- No hover background, `cursor-pointer`, or underline on static text, badges, cards, or table rows that do nothing.
+- Do not style a status badge or a label like a button.
+- Colored or underlined text that is not a link misleads; use weight or `text-foreground` for emphasis instead.
+
+
+## 7. Page structure
 
 A consistent page skeleton removes most layout decisions:
 
@@ -96,7 +139,7 @@ A consistent page skeleton removes most layout decisions:
 - Do not wrap everything in cards. A card is for a self contained unit among siblings. A single form on a page does not need a card, and cards inside cards add borders without adding meaning.
 - Dashboards: lead with the two to four numbers that matter, then the list that needs attention. Do not fill space with charts nobody asked for.
 
-## 6. Responsive behavior
+## 8. Responsive behavior
 
 Write the mobile layout first with no prefix, then add `sm:`, `md:`, `lg:` for wider screens.
 
@@ -111,7 +154,7 @@ Write the mobile layout first with no prefix, then add `sm:`, `md:`, `lg:` for w
 - Use container queries (`@container` with `@md:` variants) for components that live in both wide and narrow slots, such as a card that appears in a sidebar and in a main column.
 - Sticky elements (table headers, save bars) need a solid background and a z-index from a small fixed set, for example 10 for sticky, 40 for overlays, 50 for dialogs.
 
-## 7. Overflow and long content
+## 9. Overflow and long content
 
 Sample data is short. Real data is not. Decide for every text slot what happens when the value is long.
 
@@ -125,11 +168,32 @@ Sample data is short. Real data is not. Decide for every text slot what happens 
 - Numbers: format with `Intl.NumberFormat`, including currency and compact notation for large counts.
 - Images and avatars: fixed aspect ratio (`aspect-square`, `aspect-video`), `object-cover`, and a fallback (initials or icon) when the image is missing or fails.
 
-## 8. Things to avoid
+## 10. Text over images
+
+Put text on an image only when the image is the content (cover photos, media thumbnails, a marketing hero the user asked for). Otherwise put the text beside or below it.
+
+When text does sit on an image, give it a backing so it stays readable on any photo:
+- **Gradient scrim**: an absolutely positioned layer between image and text that darkens only the text area, for example `bg-gradient-to-t from-black/70 via-black/30 to-transparent` along the bottom.
+- **Blurred backing**: a solid translucent panel behind the text, for example `bg-black/50 backdrop-blur-sm`, for text in the middle of a busy image.
+- Text on the scrim is white (or `text-white` with the scrim tuned to it). Check 4.5:1 against the lightest part of the image under the text, not the average.
+- A text shadow alone is not enough.
+
+This is the one place a gradient or blur is functional. The "no gradients or glass blur" rule in section 11 is about decoration, not about scrims.
+
+```tsx
+<div className="relative aspect-video overflow-hidden rounded-lg">
+  <img src={cover} alt="" className="absolute inset-0 size-full object-cover" />
+  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-12">
+    <h3 className="font-semibold text-white">{title}</h3>
+  </div>
+</div>
+```
+
+## 11. Things to avoid
 
 These are the visual habits that make an interface read as machine generated and get in the way of use:
 
-- Purple to blue gradients, glass blur panels, glow shadows
+- Purple to blue gradients, glass blur panels, glow shadows (a scrim behind text on an image is not decoration; see section 10)
 - Emoji as icons or in headings
 - A hero section with a tagline on an internal tool screen
 - Every section inside a card, with an icon in a tinted circle on top
