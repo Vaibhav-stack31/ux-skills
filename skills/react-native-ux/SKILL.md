@@ -98,6 +98,7 @@ Check every item against the code before saying the work is complete.
 
 **Navigation**
 - [ ] Back works by header button, iOS swipe, and Android back
+- [ ] Open modals and sheets block the screen behind them: the backdrop catches taps, the background does not scroll, it is hidden from the screen reader, and Android back closes the overlay first
 - [ ] Screen has a title; the user lands somewhere sensible after each action
 
 **Access**

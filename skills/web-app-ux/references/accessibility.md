@@ -31,6 +31,7 @@ Use the element that already means what you need. Native elements bring keyboard
 - Focus is always visible. Never remove the outline without a replacement: pair any `outline-none` with `focus-visible:ring-2 focus-visible:ring-ring` or the project's equivalent. The focus indicator needs 3:1 contrast against its surroundings.
 - Tab order follows the visual order. Do not use positive `tabIndex` values. Use `tabIndex={0}` only on custom interactive elements and `tabIndex={-1}` for elements that receive focus by script.
 - Dialogs trap focus while open and return it to the trigger on close. Menus and popovers close on Escape.
+- While a modal is open, the rest of the page is `inert` (or `aria-hidden` with a focus trap), so neither Tab nor a screen reader's virtual cursor can reach content behind the backdrop. Remove it on close. See `actions-and-feedback.md` section 5 for scroll lock and click blocking.
 - After a route change, move focus to the main heading or the `main` element. After deleting an item, move focus to the next item or the list heading, not to the top of the document.
 - Provide a skip link:
 
@@ -99,7 +100,7 @@ Screen readers do not notice visual changes unless told.
 
 When you can run the app, or when describing what the user should check:
 
-1. Put the mouse away. Tab through the whole screen. Can you see where you are, reach everything, operate everything, and get out of every dialog?
+1. Put the mouse away. Tab through the whole screen. Can you see where you are, reach everything, operate everything, and get out of every dialog? With a dialog open, does Tab stay inside it, and do scrolling and clicking the page behind it do nothing?
 2. Zoom the browser to 200%. Does anything overlap or get cut off?
 3. Narrow the window to 360px. Any sideways scrolling?
 4. Read only the headings and the button and link labels. Do they make sense out of context?

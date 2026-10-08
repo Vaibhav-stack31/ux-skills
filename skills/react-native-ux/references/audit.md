@@ -22,7 +22,7 @@ List the routes (the `app/` folder in Expo Router, or the navigator definitions)
 node <skill-dir>/scripts/ux-scan.mjs <path-to-app-source>
 ```
 
-Add `--json` for machine readable output. The scanner is a set of static heuristics. It quickly finds likely problems: pressables without roles or labels, small touch targets, `ScrollView` with `.map()`, lists without empty components, inputs without keyboard configuration or keyboard avoidance, disabled font scaling, the deprecated core `SafeAreaView`, text classes on `View`, and data screens without loading or error handling. It produces false positives, and it cannot see layout, flow, or copy. Confirm each finding by reading the code, and never treat a clean scan as a pass.
+Add `--json` for machine readable output. The scanner is a set of static heuristics. It quickly finds likely problems: pressables without roles or labels, small touch targets, `ScrollView` with `.map()`, lists without empty components, inputs without keyboard configuration or keyboard avoidance, disabled font scaling, the deprecated core `SafeAreaView`, text classes on `View`, hand built overlays that let taps, the screen reader, or Android back reach the screen behind them, `Modal` without `onRequestClose`, and data screens without loading or error handling. It produces false positives, and it cannot see layout, flow, or copy. Confirm each finding by reading the code, and never treat a clean scan as a pass.
 
 ## 3. Review each screen
 
@@ -57,6 +57,7 @@ Read the code for each screen and walk through these questions.
 
 **Navigation** (see `navigation-and-gestures.md`)
 - Native header and back gesture intact? Android back closes overlays first?
+- With a modal or sheet open, can anything behind it be tapped, scrolled, or reached by the screen reader?
 - Where does the user land after create, save, and delete?
 
 **Accessibility** (see `accessibility.md`)

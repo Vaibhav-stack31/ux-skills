@@ -44,7 +44,7 @@ Every interactive element tells the screen reader what it is, what it is called,
 - Do not nest pressables inside an accessible parent, or the inner ones become unreachable. If a row has its own buttons, make the row container non accessible and expose the main content and each button as separate items, or offer the extra actions through `accessibilityActions`.
 - Decorative images and icons are hidden: `accessible={false}` and `importantForAccessibility="no"` on Android, `accessibilityElementsHidden` on iOS, or `aria-hidden`.
 - Reading order follows the view order in the tree. Keep the code order the same as the visual order, and avoid absolute positioning that reorders content visually.
-- When an overlay is open, content behind it must be hidden from the screen reader. Native modals and well built sheet libraries do this. For custom overlays set `accessibilityViewIsModal` on iOS and `importantForAccessibility="no-hide-descendants"` on the background for Android.
+- When an overlay is open, content behind it must be hidden from the screen reader. Native modals and well built sheet libraries do this. For custom overlays set `accessibilityViewIsModal` on iOS and `importantForAccessibility="no-hide-descendants"` on the background for Android. Set `aria-modal` or `accessibilityViewIsModal` on the overlay container itself, and clear the background setting when the overlay closes.
 - Swipe actions and long press menus are exposed through `accessibilityActions` and `onAccessibilityAction`, so screen reader users can reach them.
 
 ## 3. Announcing changes

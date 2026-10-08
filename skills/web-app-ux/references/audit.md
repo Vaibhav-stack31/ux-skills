@@ -22,7 +22,7 @@ List the routes and the component behind each one. That list is your checklist.
 node <skill-dir>/scripts/ux-scan.mjs <path-to-client-src>
 ```
 
-Add `--json` for machine readable output. The scanner is a set of static heuristics. It finds likely problems fast (clickable divs, missing labels, missing alt text, removed focus outlines, data views without loading or error handling, arbitrary values). It produces false positives and it cannot see layout, flow, or copy problems. Confirm each finding by reading the code, and never treat a clean scan as a pass.
+Add `--json` for machine readable output. The scanner is a set of static heuristics. It finds likely problems fast (clickable divs, missing labels, missing alt text, removed focus outlines, hand built modals that leave the page behind them scrollable or reachable, data views without loading or error handling, arbitrary values). It produces false positives and it cannot see layout, flow, or copy problems. Confirm each finding by reading the code, and never treat a clean scan as a pass.
 
 ## 3. Review each screen
 
@@ -42,6 +42,7 @@ Read the component code for each screen and walk through these questions. The sc
 - Can any action be fired twice?
 - Are destructive actions confirmed or undoable?
 - Where does the user land afterwards?
+- With a dialog or sheet open, can the page behind it still scroll, be clicked, or be reached with Tab or a screen reader?
 
 **Forms** (see `forms.md`)
 - Visible linked labels? Correct input types and autocomplete?

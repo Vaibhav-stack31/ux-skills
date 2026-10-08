@@ -13,6 +13,13 @@ const PRESSABLES = ["Pressable", "TouchableOpacity", "TouchableHighlight", "Touc
 const LISTS = ["FlatList", "FlashList", "SectionList", "Animated.FlatList"];
 const SPREAD = /\{\s*\.\.\./;
 
+// Hand built overlays: an absolutely filled View with a backdrop color, in a file that reads like a modal.
+const FILL = /StyleSheet\.absoluteFill(?:Object)?\b|\babsolute\b[^"'`\n]*\binset-0\b|\binset-0\b[^"'`\n]*\babsolute\b/;
+const BACKDROP_COLOR = /\bbg-(?:black|background|foreground)\/\d+|rgba\(\s*0\s*,\s*0\s*,\s*0\s*,|backgroundColor:\s*["']#000(?:000)?[0-9a-fA-F]{0,2}["']/;
+const MODAL_LIKE = /\b(?!StyleSheet\b)\w*(?:Modal|Dialog|Sheet|Backdrop|Overlay|Popup)\b|\b(?:isOpen|isVisible|visible|open)\s*&&/;
+const MODAL_LIB = /<Modal[\s>]|@gorhom\/bottom-sheet|react-native-modal|react-native-actions-sheet|presentation:\s*["'](?:modal|transparentModal|formSheet|containedModal)/;
+const overlayIndex = (s) => (BACKDROP_COLOR.test(s) && MODAL_LIKE.test(s) && !MODAL_LIB.test(s) ? s.search(FILL) : -1);
+
 const TAG_RULES = [
   { id: "onpress-on-view", sev: "high", tags: ["View"],
     test: (a) => has(a, "onPress"),
@@ -53,12 +60,17 @@ const TAG_RULES = [
   { id: "image-without-size", sev: "low", tags: ["Image"],
     test: (a) => !has(a, "style", "className") && !SPREAD.test(a),
     msg: "Image without dimensions. Set width and height or an aspect ratio." },
+  { id: "modal-without-request-close", sev: "medium", tags: ["Modal"],
+    test: (a, _n, src) => /import\s*\{[^}]*\bModal\b[^}]*\}\s*from\s*["']react-native["']/.test(src) && !has(a, "onRequestClose") && !SPREAD.test(a),
+    msg: "Modal without onRequestClose. Android back will not close it." },
   { id: "scroll-padding", sev: "low", tags: ["ScrollView", "FlatList", "FlashList", "KeyboardAwareScrollView"],
     test: (a) => /\bp[xytb]?-\d/.test(cls(a)) && !has(a, "contentContainerStyle", "contentContainerClassName"),
     msg: "Padding class on a scroll container. Use contentContainerClassName or contentContainerStyle so content is not clipped." },
 ];
 
 const LINE_RULES = [
+  { id: "backdrop-passes-touches", sev: "high", re: /(?=.*pointerEvents=\{?["'](?:none|box-none)["'])(?=.*[Bb]ackdrop)/,
+    msg: "Backdrop with pointerEvents none or box-none. Taps go through to the screen behind the overlay." },
   { id: "font-scaling-disabled", sev: "high", re: /allowFontScaling=\{\s*false\s*\}|allowFontScaling\s*=\s*false/,
     msg: "Font scaling disabled. Users with large text settings cannot read this; use maxFontSizeMultiplier if a cap is needed." },
   { id: "static-dimensions", sev: "low", re: /\bDimensions\.get\(/,
@@ -111,6 +123,14 @@ const FILE_RULES = [
   { id: "mutation-without-pending", sev: "high",
     test: (s) => /useMutation\s*[(<]|handleSubmit\(/.test(s) && !/isPending|isSubmitting|isLoading|\bsubmitting\b|\bloading\b|\bpending\b|disabled=/.test(s),
     msg: "Submits or mutates with no pending state, so it can be double tapped and gives no feedback." },
+  { id: "overlay-background-reachable", sev: "high",
+    test: (s) => overlayIndex(s) !== -1 && !/accessibilityViewIsModal|aria-modal|no-hide-descendants/.test(s),
+    at: (s) => lineAt(s, overlayIndex(s)),
+    msg: "Hand built overlay without accessibilityViewIsModal or aria-modal. VoiceOver and TalkBack can reach the screen behind it. Use Modal or the sheet library, or set aria-modal on the overlay and importantForAccessibility=\"no-hide-descendants\" on the background." },
+  { id: "overlay-without-back", sev: "medium",
+    test: (s) => overlayIndex(s) !== -1 && !/BackHandler|useBackHandler|onRequestClose/.test(s),
+    at: (s) => lineAt(s, overlayIndex(s)),
+    msg: "Hand built overlay with no BackHandler. Android back will leave the screen instead of closing the overlay." },
   { id: "no-safe-area", sev: "medium",
     test: (s) => /headerShown:\s*false/.test(s) && !/useSafeAreaInsets|SafeAreaView|-safe\b/.test(s),
     msg: "Header hidden but no safe area handling in this file. Content may sit under the status bar or notch." },
@@ -185,7 +205,7 @@ for (const file of files) {
     }
   });
   for (const r of FILE_RULES) {
-    if (r.test(src)) add(r, file, 1);
+    if (r.test(src)) add(r, file, r.at ? r.at(src) : 1);
   }
 }
 

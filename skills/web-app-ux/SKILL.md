@@ -101,6 +101,7 @@ Check every item against the code before saying the work is complete. If an item
 
 **Access**
 - [ ] Everything reachable and operable by keyboard with visible focus
+- [ ] Open modals block the page behind them: scroll locked, clicks caught by the backdrop, background `inert`, focus trapped and returned on close
 - [ ] Icon only buttons have `aria-label`; images have `alt`
 - [ ] Text contrast at least 4.5:1; meaning never carried by color alone
 

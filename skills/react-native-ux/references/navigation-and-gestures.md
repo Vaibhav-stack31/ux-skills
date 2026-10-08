@@ -69,6 +69,12 @@ Choose by how much the task interrupts.
 Rules:
 - One overlay at a time. Do not stack a dialog on a sheet on a modal.
 - Every overlay can be dismissed by an obvious control, and by Android back.
+- A modal overlay blocks the screen behind it until it closes:
+  - **Touches are blocked.** A full screen backdrop sits between the overlay and the screen and catches every tap, so nothing behind it can be pressed. Tapping it either dismisses the overlay or does nothing (for a blocking dialog); it never reaches the screen. Never give the backdrop `pointerEvents="none"` or `"box-none"`.
+  - **Scrolling is blocked.** The screen behind does not scroll; only content inside the overlay scrolls.
+  - **The screen reader is blocked.** Content behind the overlay is hidden from VoiceOver and TalkBack (see `accessibility.md` section 2).
+  - **Android back closes the overlay**, not the screen behind it.
+- React Native's `Modal`, the native stack's modal and form sheet presentations, and `@gorhom/bottom-sheet` with `BottomSheetModal` and `BottomSheetBackdrop` do this. Give every `Modal` an `onRequestClose`, which Android back calls. A hand built overlay (an absolutely positioned `View` over the screen) must do all of it itself; prefer replacing it with one of these.
 - Overlays respect safe areas and the keyboard.
 - Do not use a modal to announce success. Use a toast, a haptic, or the visible result.
 - Do not interrupt with permission prompts, rating requests, or promotions in the middle of a task.

@@ -159,6 +159,13 @@ Overlays interrupt. Use them only when interruption is the point.
 
 Rules:
 - A dialog has a title that names the task, an obvious close button, and closes on Escape. Radix and Base UI handle focus trapping and focus return; do not break them by rendering custom overlays.
+- A modal (Dialog, AlertDialog, Sheet, Drawer) blocks the page behind it until it closes:
+  - **Scroll is locked.** The page behind does not scroll, on wheel, touch, or keyboard. The lock keeps the scrollbar gap so the page does not shift sideways.
+  - **Clicks are blocked.** A backdrop covers the whole viewport and catches every click and tap, so nothing behind it can be pressed. Clicking the backdrop either closes the dialog or does nothing (AlertDialog); it never reaches the page.
+  - **Keyboard and screen readers are blocked.** Everything outside the modal is `inert` (or `aria-hidden` plus a focus trap), and the dialog has `role="dialog"` with `aria-modal="true"`. Tab never lands behind the backdrop.
+  - **Everything is restored on close.** Scroll unlocks at the same position, `inert` is removed, and focus returns to the trigger.
+- Radix and Base UI Dialog, AlertDialog, and Sheet, and the vaul `Drawer` in shadcn, do all of this. A native `<dialog>` blocks clicks, keyboard, and screen readers only when opened with `showModal()`, not `show()` or the `open` attribute, and it never locks scroll, so add `html:has(dialog:modal) { overflow: hidden; }`. A hand built overlay must do all four itself; prefer replacing it with the project's `Dialog`.
+- Popovers, dropdowns, tooltips, and toasts are non modal. They leave the page usable, so do not lock scroll or add a full screen backdrop for them.
 - Do not open a dialog from a dialog. Replace the content or move the flow to a page.
 - Do not show a dialog on page load without being asked (welcome modals, promos).
 - Content taller than the viewport scrolls inside the dialog body while the title and footer stay visible.

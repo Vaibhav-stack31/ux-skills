@@ -11,6 +11,21 @@ const SKIP_FILE = /components[\\/]ui[\\/]/; // vendored shadcn primitives
 const ASYNC = /\buse(Query|SWR|InfiniteQuery|SuspenseQuery)\s*[(<]|\bfetch\(|\baxios\b|\bapi\s*[.(<]/;
 const MAPS_JSX = /\.map\(\s*(?:async\s*)?\(?[^)]*\)?\s*=>\s*[({]?\s*(?:return\s*)?</;
 
+// Hand built modals: a dialog role, a native <dialog>, or a class string with fixed, inset-0, and a backdrop color.
+const DIALOG_MARKUP = /role=["'](?:alert)?dialog["']|aria-modal=|<dialog[\s>]/;
+const BACKDROP_CLASS = /\bbg-(?:black|white|background|foreground|(?:gray|slate|zinc|neutral|stone)-\d+)\/\d+|\bbg-opacity-\d+|\bbackdrop-/;
+const isBackdropClass = (s) => /\bfixed\b/.test(s) && /\binset-0\b/.test(s) && BACKDROP_CLASS.test(s);
+const overlayIndex = (s) => {
+  const d = s.search(DIALOG_MARKUP);
+  if (d !== -1) return d;
+  const m = [...s.matchAll(/["'`]([^"'`\n]+)["'`]/g)].find((x) => isBackdropClass(x[1]));
+  return m ? m.index : -1;
+};
+const hasCustomOverlay = (s) => overlayIndex(s) !== -1;
+const MODAL_LIB = /from\s+["'][^"']*(?:components\/ui\/(?:dialog|alert-dialog|sheet|drawer)|@radix-ui\/react-(?:alert-)?dialog|@base-ui[^"']*|@headlessui\/react|vaul|react-aria(?:-components)?|@mui\/material[^"']*|@chakra-ui[^"']*|@mantine[^"']*|antd)["']/;
+const BACKGROUND_BLOCKED = /\binert\b|\.showModal\(|FocusTrap|focus-trap|FocusLock|focus-lock|FocusScope|useFocusTrap/;
+const SCROLL_LOCKED = /document\.(?:body|documentElement)\.style\.overflow|document\.(?:body|documentElement)\.classList\.(?:add|toggle)\([^)]*overflow-hidden|RemoveScroll|remove-scroll|useScrollLock|useLockBodyScroll|useBodyScrollLock|body-scroll-lock|disableBodyScroll|lockScroll|dialog:modal|dialog\[open\]/;
+
 const TAG_RULES = [
   { id: "clickable-non-button", sev: "high", tags: ["div", "span", "li", "p", "td", "section", "img", "svg"],
     test: (a) => has(a, "onClick") && !has(a, "role"),
@@ -94,6 +109,14 @@ const FILE_RULES = [
   { id: "raw-table-overflow", sev: "medium",
     test: (s) => /<table[\s>]/.test(s) && !/overflow-x-auto|overflow-auto|ScrollArea/.test(s),
     msg: "Raw <table> without a horizontal scroll container. It will overflow on small screens." },
+  { id: "modal-background-reachable", sev: "high",
+    test: (s) => hasCustomOverlay(s) && !MODAL_LIB.test(s) && !BACKGROUND_BLOCKED.test(s),
+    at: (s) => lineAt(s, Math.max(0, overlayIndex(s))),
+    msg: "Hand built modal with no inert background or focus trap. Tab and screen readers can reach the page behind it. Use the project's Dialog, open a native <dialog> with showModal(), or set inert on the rest of the page and trap focus." },
+  { id: "modal-no-scroll-lock", sev: "medium",
+    test: (s) => (hasCustomOverlay(s) || /\.showModal\(/.test(s)) && !MODAL_LIB.test(s) && !SCROLL_LOCKED.test(s),
+    at: (s) => lineAt(s, Math.max(0, overlayIndex(s), s.search(/\.showModal\(/))),
+    msg: "Hand built modal with no scroll lock. The page behind it still scrolls. Use the project's Dialog, or lock body scroll while open and restore it on close." },
   { id: "effect-fetching", sev: "low",
     test: (s) => /useEffect\(/.test(s) && /\bfetch\(|\baxios\b/.test(s) && !/AbortController|signal/.test(s),
     msg: "Fetching in useEffect without cancellation. Stale responses can overwrite newer ones; prefer the project's query library." },
@@ -200,7 +223,7 @@ for (const file of files) {
     if (r.test(src, ctx)) add(r, file, 1);
   }
   for (const r of FILE_RULES) {
-    if (r.test(src, ctx)) add(r, file, 1);
+    if (r.test(src, ctx)) add(r, file, r.at ? r.at(src) : 1);
   }
 }
 
