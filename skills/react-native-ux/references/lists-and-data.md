@@ -29,6 +29,10 @@ A consistent row structure makes a list scannable:
 3. Secondary text: one or two lines, muted
 4. Trailing element: value, time, badge, or chevron
 
+Show every value in the user's words, not the database's: "Paid", not `PAYMENT_SUCCEEDED`; "Admin", not `role_2`. Map each enum to a label (and badge color) in one place and use that map everywhere.
+
+Long lists read better in labelled groups: use `SectionList` (or section headers in `FlashList`) to group by date ("Today", "Yesterday", "Earlier this week") or by status or category.
+
 ```tsx
 function MemberRow({ member, onPress }: Props) {
   return (
@@ -175,7 +179,7 @@ In all cases: right align numbers with tabular figures, keep units in labels, sh
 
 Three different situations, three different messages.
 
-1. **Nothing yet (first use)**: a short title, one sentence on what will appear here, and a button for the primary action.
+1. **Nothing yet (first use)**: a short title, one sentence on what will appear here, and a button for the primary action. This is where users learn the feature, because they skip onboarding slides and help screens.
 2. **No results for the search or filters**: say so, echo the query, offer "Clear filters".
 3. **Failed to load**: an error with "Try again". This is not an empty state.
 

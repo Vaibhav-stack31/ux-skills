@@ -28,7 +28,20 @@ const tightStyleLeading = { test: (t) => { const f = num(t, "fontSize"), l = num
 const tightStyleTracking = { test: (t) => { const f = num(t, "fontSize"), ls = num(t, "letterSpacing"); return f !== null && ls !== null && ls < 0 && f <= 16; } };
 const overlayIndex = (s) => (BACKDROP_COLOR.test(s) && MODAL_LIKE.test(s) && !MODAL_LIB.test(s) ? s.search(FILL) : -1);
 
+// Honest design and mental model checks.
+const CONSENT = /newsletter|marketing|promo|special offers|subscribe|opt.?in|terms|privacy|consent|share (?:my )?data|third.part|partners/i;
+const PRECHECKED = /\b(?:defaultChecked|checked|value)(?:=\{\s*true\s*\})?(?=\s|\/|$)/;
+// the label usually follows the control; stop at the next control so a neighbor's label does not count
+const nearConsent = (a, src, idx) => {
+  const after = src.slice(idx + 1, idx + 300);
+  const next = after.search(/<(?:input|Checkbox|CheckBox|Switch)\b/);
+  return CONSENT.test(a) || CONSENT.test(next === -1 ? after : after.slice(0, next));
+};
+
 const TAG_RULES = [
+  { id: "preselected-consent", sev: "medium", tags: ["Checkbox", "CheckBox", "Switch"],
+    test: (a, n, src, idx) => true && PRECHECKED.test(a) && nearConsent(a, src, idx),
+    msg: "Consent, marketing, or terms checkbox starts checked. Opt ins and agreements must start unchecked." },
   { id: "onpress-on-view", sev: "high", tags: ["View"],
     test: (a) => has(a, "onPress"),
     msg: "onPress on a View does nothing. Use Pressable." },
@@ -83,6 +96,12 @@ const TAG_RULES = [
 ];
 
 const LINE_RULES = [
+  { id: "preselected-consent", sev: "medium", re: /\b(?:newsletter|marketing\w*|promo\w*|subscribe\w*|opt_?in\w*|acceptTerms|agreeTo\w*|accept(?:ed)?Privacy|consent\w*|shareData|termsAccepted)\s*:\s*true\b|\[\s*\w*(?:newsletter|marketing|subscribe|optIn|consent|terms|agree)\w*\s*,\s*\w+\s*\]\s*=\s*useState\(\s*true\b/i,
+    msg: "Consent or marketing option defaults to true. Opt ins, data sharing, paid add ons, and agreement to terms must start unchecked." },
+  { id: "confirmshaming", sev: "medium", re: /no,?\s+(?:thanks|thank you)?,?\s*i\s+(?:don'?t|do not)\s+(?:want|like|need|care)|\bi\s+(?:don'?t|do not)\s+(?:want|like|care about)\s+(?:to\s+)?(?:sav|discount|deal|money|free|better|grow|improv|success|learn)|\bi(?:'m| am)\s+not\s+interested\s+in\s+(?:sav|grow|improv|learn|being|getting)|\bi(?:'d| would)\s+rather\s+(?:pay|miss|lose|stay)|\bi\s+prefer\s+(?:to\s+)?(?:pay full|miss)/i,
+    msg: "Guilt wording on a decline option (confirmshaming). Use a neutral label such as \"No thanks\", \"Not now\", or \"Skip\"." },
+  { id: "raw-enum-label", sev: "low", re: />\s*[A-Z][A-Z0-9]*_[A-Z0-9_]+\s*<|>\s*\{\s*(?:\w+\??\.)*(?:status|state|role|kind|type)\s*\}\s*</,
+    msg: "Raw enum or status value rendered as text. Map it to a label in the user's words (\"Paid\", not PAYMENT_SUCCEEDED) in one shared place." },
   { id: "tight-body-leading", sev: "medium", re: /(?=.*\bleading-(?:none|tight)\b)(?=.*\btext-(?:xs|sm|base)\b)/,
     msg: "Tight line height on body sized text. Lines collide and descenders clip on Android; keep body text at 1.3 to 1.5 times the size." },
   { id: "tight-body-leading", sev: "medium", re: tightStyleLeading,

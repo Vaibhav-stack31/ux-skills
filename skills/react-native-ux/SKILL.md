@@ -66,6 +66,7 @@ Read only what the task needs.
 - `references/feedback-and-states.md`: buttons and press states, loading patterns, toasts, errors, offline, destructive actions, optimistic updates.
 - `references/accessibility.md`: screen reader props, focus order, contrast, scaling, motion.
 - `references/audit.md`: review procedure, severity scale, report template, scanner usage.
+- `references/ux-laws.md`: the 30 Laws of UX mapped to the rules in this skill, plus how to resolve the places where they pull in different directions. Read when a principle is named or a design decision needs a reason.
 
 ## 6. Done checklist
 
@@ -96,15 +97,19 @@ Check every item against the code before saying the work is complete.
 - [ ] Visible label on every input; correct keyboard type, autofill hints, and return key
 - [ ] Focused input and submit button stay above the keyboard; tapping outside dismisses it
 - [ ] Submit shows pending and cannot be double tapped; errors appear next to the field
+- [ ] Nothing asked that the app already knows; long forms in steps of three to six fields with "Step N of M" and a review screen
+- [ ] No preselected opt ins, no guilt wording on decline options, full price shown before purchase
 
 **Lists**
 - [ ] Virtualized list with stable keys, an empty component, and a footer loader when paginating
 - [ ] Rows are one tap target with clear primary and secondary text
+- [ ] Values and statuses use the user's words, not enums or internal names
 
 **Navigation**
 - [ ] Back works by header button, iOS swipe, and Android back
 - [ ] Open modals and sheets block the screen behind them: the backdrop catches taps, the background does not scroll, it is hidden from the screen reader, and Android back closes the overlay first
 - [ ] Screen has a title; the user lands somewhere sensible after each action
+- [ ] No onboarding carousel before use; significant flows end on a completion screen; unfinished work is easy to resume
 
 **Access**
 - [ ] Pressables have `accessibilityRole` and, when icon only, `accessibilityLabel`

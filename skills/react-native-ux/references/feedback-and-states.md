@@ -11,6 +11,7 @@
 8. Optimistic updates
 9. Permissions
 10. Disabled states
+11. Honest design
 
 ## 1. Buttons and pressables
 
@@ -74,6 +75,8 @@ Skeleton rules:
 - If the shape of the content is unknown or very small, use an `ActivityIndicator` instead. Do not show both.
 - Give every request a timeout. A skeleton that never resolves must become an error with "Try again".
 - Screen readers should hear that loading started and finished (see `accessibility.md`).
+
+Aim to respond within about 400ms. Below that, the app feels like it keeps pace with the user; anything that can take longer gets one of the patterns above. Do not add artificial delays to make something feel more substantial.
 
 ## 4. Success feedback and toasts
 
@@ -156,3 +159,16 @@ For quick, low risk, reversible actions (like, favorite, toggle, reorder, mark d
 - Prefer leaving the primary button enabled and explaining what is missing when it is pressed.
 - Hide actions the user can never perform. Show as disabled, with a reason, those that are temporarily unavailable.
 - Disabled styling must still be legible. Set `accessibilityState={{ disabled: true }}` so screen readers announce it.
+
+## 11. Honest design
+
+Interfaces can exploit predictable biases in how people decide. Do not.
+
+- **No preselected opt ins.** Marketing, data sharing, paid add ons, and consent toggles or checkboxes start off.
+- **No confirmshaming.** The decline option is a plain, neutral label ("No thanks", "Not now", "Skip"), never guilt ("No, I don't want to save money"). It is visible and at least 48 tall, not a faint link under the primary button.
+- **No hidden costs.** Show the full price, including fees, taxes, trial end date, and renewal terms, before the purchase step.
+- **No fake urgency or scarcity.** Countdown timers, "Only 2 left", and similar claims appear only when true.
+- **Leaving is as easy as joining.** Cancelling, unsubscribing, and deleting an account take no more steps than signing up. For store subscriptions, link straight to the platform's manage subscriptions page.
+- **No disguised content.** Ads, sponsored items, and upsells are labelled and do not look like the user's own data or the app's controls.
+- **Important messages look important, not promotional.** Warnings and required actions appear inline next to what they affect. Content that looks like a banner or an ad gets ignored.
+- **Permission and rating prompts are honest.** Explain the real reason before a system permission prompt, and never gate the app behind a rating request.

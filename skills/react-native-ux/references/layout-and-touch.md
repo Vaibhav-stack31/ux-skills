@@ -53,6 +53,8 @@ A predictable skeleton for most screens:
 - Screen horizontal padding: `px-4` (16) as the default, the same on every screen.
 - Almost every screen should scroll, even if its content fits on your test device. Smaller phones, larger fonts, and the keyboard all reduce the space. Use `ScrollView` for static content and a list component for collections.
 - One primary action per screen. If it must always be visible, pin it at the bottom above the safe area. Otherwise put it at the end of the content.
+- Every element must earn its place on a small screen. A few actions and fields do most of the work; keep those visible and move rarely used options into an "Advanced" section, an overflow menu, or a settings screen. Fewer visible choices means faster decisions.
+- Plan and pricing pickers: three or four options, with one marked "Recommended" using the existing accent and the screen's one primary button.
 - Group content into sections with a small heading and 24 to 32 between sections.
 
 ## 3. Spacing and alignment

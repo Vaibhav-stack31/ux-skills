@@ -32,7 +32,20 @@ const LOOKS_CLICKABLE = /(?:^|[\s"'`])(?:hover:(?:bg|underline|shadow|text|borde
 const SCRIM = /from-black\/|via-black\/|bg-black\/\d|from-background|bg-background\/\d|bg-gradient-to-|bg-linear-to-|backdrop-blur/;
 const SCROLL_LOCKED = /document\.(?:body|documentElement)\.style\.overflow|document\.(?:body|documentElement)\.classList\.(?:add|toggle)\([^)]*overflow-hidden|RemoveScroll|remove-scroll|useScrollLock|useLockBodyScroll|useBodyScrollLock|body-scroll-lock|disableBodyScroll|lockScroll|dialog:modal|dialog\[open\]/;
 
+// Honest design and mental model checks.
+const CONSENT = /newsletter|marketing|promo|special offers|subscribe|opt.?in|terms|privacy|consent|share (?:my )?data|third.part|partners/i;
+const PRECHECKED = /\b(?:defaultChecked|checked|value)(?:=\{\s*true\s*\})?(?=\s|\/|$)/;
+// the label usually follows the control; stop at the next control so a neighbor's label does not count
+const nearConsent = (a, src, idx) => {
+  const after = src.slice(idx + 1, idx + 300);
+  const next = after.search(/<(?:input|Checkbox|CheckBox|Switch)\b/);
+  return CONSENT.test(a) || CONSENT.test(next === -1 ? after : after.slice(0, next));
+};
+
 const TAG_RULES = [
+  { id: "preselected-consent", sev: "medium", tags: ["input", "Checkbox", "Switch"],
+    test: (a, n, src, idx) => (n !== "input" || /type=["']checkbox["']/.test(a)) && PRECHECKED.test(a) && nearConsent(a, src, idx),
+    msg: "Consent, marketing, or terms checkbox starts checked. Opt ins and agreements must start unchecked." },
   { id: "clickable-non-button", sev: "high", tags: ["div", "span", "li", "p", "td", "section", "img", "svg"],
     test: (a) => has(a, "onClick") && !has(a, "role"),
     msg: "onClick on a non interactive element. Use <button> or <a> so it is focusable and works with a keyboard." },
@@ -69,6 +82,12 @@ const TAG_RULES = [
 ];
 
 const LINE_RULES = [
+  { id: "preselected-consent", sev: "medium", re: /\b(?:newsletter|marketing\w*|promo\w*|subscribe\w*|opt_?in\w*|acceptTerms|agreeTo\w*|accept(?:ed)?Privacy|consent\w*|shareData|termsAccepted)\s*:\s*true\b|\[\s*\w*(?:newsletter|marketing|subscribe|optIn|consent|terms|agree)\w*\s*,\s*\w+\s*\]\s*=\s*useState\(\s*true\b/i,
+    msg: "Consent or marketing option defaults to true. Opt ins, data sharing, paid add ons, and agreement to terms must start unchecked." },
+  { id: "confirmshaming", sev: "medium", re: /no,?\s+(?:thanks|thank you)?,?\s*i\s+(?:don'?t|do not)\s+(?:want|like|need|care)|\bi\s+(?:don'?t|do not)\s+(?:want|like|care about)\s+(?:to\s+)?(?:sav|discount|deal|money|free|better|grow|improv|success|learn)|\bi(?:'m| am)\s+not\s+interested\s+in\s+(?:sav|grow|improv|learn|being|getting)|\bi(?:'d| would)\s+rather\s+(?:pay|miss|lose|stay)|\bi\s+prefer\s+(?:to\s+)?(?:pay full|miss)/i,
+    msg: "Guilt wording on a decline option (confirmshaming). Use a neutral label such as \"No thanks\", \"Not now\", or \"Skip\"." },
+  { id: "raw-enum-label", sev: "low", re: />\s*[A-Z][A-Z0-9]*_[A-Z0-9_]+\s*<|>\s*\{\s*(?:\w+\??\.)*(?:status|state|role|kind|type)\s*\}\s*</,
+    msg: "Raw enum or status value rendered as text. Map it to a label in the user's words (\"Paid\", not PAYMENT_SUCCEEDED) in one shared place." },
   { id: "tight-body-leading", sev: "medium", re: /<p\b[^>]*\bleading-(?:none|tight|snug|\[1(?:\.[0-2]\d*)?\])(?=[\s"'`\]])/,
     msg: "Tight line height on paragraph text. Keep body text at about 1.5 (the Tailwind default) and reserve tight leading for headings." },
   { id: "small-text-tight-tracking", sev: "low", re: /(?=.*\btracking-(?:tight|tighter|\[-))(?=.*\btext-(?:xs|sm|base)\b)/, unless: /\btext-(?:lg|[2-9]?xl)\b/,

@@ -18,7 +18,9 @@ Typing on a phone is slow and error prone, and the keyboard covers about half th
 - One column, full width inputs, labels above.
 - Input height at least 48. Text inside at 16 or larger.
 - Ask for the minimum. Every field removed helps more on mobile than anywhere else. Prefill from what the app already knows (profile, location with permission, last used values).
-- Split long forms into steps of three to six fields with a progress indicator. Keep data when going back.
+- Do not ask for what the app can work out. Default country, currency, and timezone from the device locale, fill city from the postcode, detect the card type from the number. Let the user correct any of it. The app absorbs the complexity so the user does not have to.
+- Split long forms into steps of three to six fields. Show the position and the step name ("Step 2 of 4: Shipping"). Keep data when going back.
+- Before the final submit of a multi step form, show a review screen that summarizes every answer with an edit link per section. Users should not have to remember what they entered three screens ago.
 - Group related fields under small headings, with more space between groups than within them.
 - The form scrolls. Do not assume it fits.
 - The submit button is full width, at the end of the form or pinned above the keyboard.
@@ -120,6 +122,8 @@ Typing is the most expensive input on a phone. Prefer taps.
 - Quantities: a stepper with minus and plus buttons of at least 48
 - Location, photos, contacts: offer the device capability, request permission at the moment it is needed with a sentence explaining why, and provide a manual fallback if it is declined
 - Selected state must be visible without relying on color alone (a check mark or filled indicator)
+- Give a choice a sensible default when one option is clearly the most common. A default never opts the user into something they did not choose: marketing, data sharing, paid add ons, and agreement to terms start off. See `feedback-and-states.md` section 11.
+- Show long numbers and codes in groups so they are easy to read and check: card numbers in fours, phone numbers in the local pattern, one time codes and reference numbers in threes or fours. Accept any spacing on input and store them without spaces.
 
 ## 7. Validation
 

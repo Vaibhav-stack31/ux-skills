@@ -11,6 +11,7 @@
 8. Transitions and motion
 9. Where users land after actions
 10. Deep links and state restoration
+11. First run, progress, and unfinished work
 
 ## 1. Structure
 
@@ -115,7 +116,7 @@ Haptics accompany visual feedback and never replace it. Some devices have none, 
 - **Delete**: pop to the list, with the item gone and an undo toast where possible.
 - **Sign in**: the screen the user was trying to reach, or the main tab. Reset the stack so Back does not return to sign in.
 - **Sign out**: the sign in screen, with cached data cleared and the stack reset.
-- **Finishing a flow** (checkout, onboarding): a clear completion screen with one next action, and the flow's screens removed from history.
+- **Finishing a flow** (checkout, onboarding): a clear completion screen with one next action, and the flow's screens removed from history. See section 11.
 
 ## 10. Deep links and state restoration
 
@@ -124,3 +125,14 @@ Haptics accompany visual feedback and never replace it. Some devices have none, 
 - Opening a link while signed out leads to sign in and then to the intended screen.
 - When the app returns from the background, refresh stale data quietly and keep the user where they were. Do not reset to the home screen.
 - Preserve in progress input across backgrounding. The operating system may end the app at any time.
+
+## 11. First run, progress, and unfinished work
+
+Users start using an app right away and skip instructions. They push harder as a goal gets closer, they remember unfinished tasks, and they judge an experience by its best or worst moment and by how it ends.
+
+- **No up front tours.** Do not put a carousel of onboarding slides or a tutorial before the app can be used. Ask only for what is needed to start (often nothing), and teach at the point of use: empty states (see `lists-and-data.md` section 8), a short hint the first time a feature appears, permission requests at the moment they are needed.
+- **Setup checklists** for apps that need several setup tasks: a short list on the home screen with progress ("3 of 5 done"), the most valuable task first, and steps already done (such as creating the account) counted as done. It can be dismissed and disappears when complete.
+- **Show progress in multi step flows**: "Step 2 of 4" with step names, counting up. Never add steps the user did not see coming.
+- **Make unfinished work easy to resume.** Label drafts as "Draft", show a "Continue where you left off" entry on the home screen, and keep in progress input across app restarts. Do not nag with alerts or repeated notifications.
+- **End significant flows well.** The completion screen of a signup, checkout, or setup is a screen in the flow, not an alert. It says what happened, what happens next, and offers the next action. Reserve it for flows like these; routine saves use the lighter feedback in `feedback-and-states.md` section 4. A success haptic fits; confetti or a celebration animation only if the user asks for it.
+- **Protect the worst moment.** A failure late in a flow must keep everything the user entered and say how to fix it.

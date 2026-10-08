@@ -8,6 +8,7 @@
 5. Mobile navigation
 6. Where users land after actions
 7. Routes every app needs
+8. First run, progress, and unfinished work
 
 ## 1. App shell
 
@@ -62,7 +63,7 @@ Decide this for every mutation. Being left on a stale form after saving is a com
 - **Login**: return to the page the user originally asked for, not always the dashboard.
 - **Logout**: go to the login page and clear cached data.
 - **Cancel**: return to where the user came from without side effects.
-- **Multi step flows**: end on a clear completion screen with the next sensible action.
+- **Multi step flows**: end on a clear completion screen with the next sensible action. See section 8.
 
 Use `navigate(path, { replace: true })` after a create so that Back does not return to the filled form and submit a duplicate. In Next.js see `nextjs.md` section 8.
 
@@ -73,3 +74,14 @@ Use `navigate(path, { replace: true })` after a create so that Back does not ret
 - A route level error boundary with retry.
 - Protected routes that show a loading state while the session is checked. Flashing the login page for a signed in user, or protected content for a signed out one, both look broken.
 - A sensible index route: land signed in users on the page they use most.
+
+## 8. First run, progress, and unfinished work
+
+Users start using an app right away and skip instructions. They push harder as a goal gets closer, they remember unfinished tasks, and they judge an experience by its best or worst moment and by how it ends.
+
+- **No up front tours.** Do not block first use with a product tour, a carousel of tips, or a video. Teach at the point of use: empty states (see `data-display.md` section 7), a short hint next to a new feature, a tip shown once and dismissible.
+- **Setup checklists** for apps that need several setup tasks: a short list on the home page with progress ("3 of 5 done"), the most valuable task first, and steps the user has already done (such as creating the account) counted as done. It can be dismissed and disappears when complete.
+- **Show progress in multi step flows**: "Step 2 of 4" with step names, counting up. Never add steps the user did not see coming.
+- **Make unfinished work easy to resume.** Label drafts as "Draft", show a "Continue where you left off" entry on the home page, and surface incomplete setup in one consistent place. Do not nag with modals or repeated toasts.
+- **End significant flows well.** The completion screen of a signup, checkout, or setup says what happened, what happens next, and offers the next action. Reserve it for flows like these; routine saves use the lighter feedback in `actions-and-feedback.md` section 3. No confetti or celebration animation unless the user asks for it.
+- **Protect the worst moment.** A failure late in a flow must keep everything the user entered and say how to fix it. Losing a long form on the last step is the moment users remember.

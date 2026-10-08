@@ -9,6 +9,7 @@
 6. Destructive actions and undo
 7. Disabled and unavailable actions
 8. Menus, tooltips, badges
+9. Honest design
 
 ## 1. Buttons
 
@@ -94,6 +95,8 @@ Skeleton rules:
 - If the shape of the content is unknown or very small, use a spinner instead, with an accessible name (`role="status"` and `aria-label="Loading"`), or `aria-hidden` when adjacent text already says what is happening.
 - Do not show a skeleton and a spinner together.
 - Give every request a timeout. A skeleton that never resolves must become an error with retry.
+
+Aim to respond within about 400ms. Below that, the app feels like it keeps pace with the user; anything that can take longer gets one of the patterns above. Do not add artificial delays to make something feel more substantial.
 
 Load the page shell (navigation, header, title) immediately and load data regions independently, so one slow request does not hold back the whole screen.
 
@@ -232,3 +235,15 @@ Never use `window.confirm` or `window.alert`. They cannot be styled, block the t
 - **Badges**: for status and counts. Use a small fixed vocabulary of statuses with consistent colors across the app, always with a text label. A badge is not a button; if it is clickable, style it as one.
 - **Tabs**: for switching between views of the same object at the same level. Two to six tabs, short labels, active tab reflected in the URL. Do not use tabs as steps in a process.
 - **Accordions**: for content most users will not need. Do not hide primary content in them.
+
+## 9. Honest design
+
+Interfaces can exploit predictable biases in how people decide. Do not.
+
+- **No preselected opt ins.** Marketing, data sharing, paid add ons, and consent checkboxes start unchecked.
+- **No confirmshaming.** The decline option is a plain, neutral label ("No thanks", "Not now", "Skip"), never guilt ("No, I don't want to save money"). It is visible and easy to hit, not a faint text link hidden under the primary button.
+- **No hidden costs.** Show the full price, including fees, taxes, and renewal terms, before the final step.
+- **No fake urgency or scarcity.** Countdown timers, "Only 2 left", and "12 people are viewing this" appear only when true.
+- **Leaving is as easy as joining.** Cancelling, unsubscribing, and deleting an account take no more steps than signing up, and do not require a phone call or a chat.
+- **No disguised content.** Ads, sponsored items, and upsells are labelled as such and do not look like the user's own data or the app's controls.
+- **Important messages look important, not promotional.** Warnings and required actions appear inline next to what they affect, in the normal UI style. Content that looks like a banner or an ad gets ignored.

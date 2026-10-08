@@ -19,7 +19,9 @@ Forms are where users do the work and where most abandonment happens. The goal i
 - Group related fields under a heading (`FieldSet` and `FieldLegend`, or a plain `fieldset` and `legend`), with more space between groups than within them.
 - Size inputs to hint at the expected length. A postcode field should not be as wide as an address field. The form container itself stays around `max-w-xl`.
 - Ask only for what is needed now. Every extra field lowers completion.
-- Long forms: split into steps with a visible progress indicator, allow going back without losing data, and save drafts.
+- Do not ask for what the app already knows or can work out. Prefill from the account, default country, currency, and timezone from the locale, fill city from the postcode, detect the card type from the number. Let the user correct any of it. The app absorbs the complexity so the user does not have to.
+- Long forms: split into steps of three to six related fields. Show the position and the step names ("Step 2 of 4: Shipping"), allow going back without losing data, and save drafts so the user can resume later.
+- Before the final submit of a multi step form, show a review step that summarizes every answer with an edit link per section. Users should not have to remember what they entered three steps ago.
 
 Button placement:
 - Page forms: buttons left aligned under the last field, on the same edge as the inputs. Primary first, then Cancel.
@@ -50,6 +52,8 @@ Button placement:
 
 Give selects and radio groups a sensible default when one option is clearly the most common.
 
+A default never opts the user into something they did not choose. Marketing emails, data sharing, paid add ons, and agreement to terms or privacy policies always start unchecked. See `actions-and-feedback.md` section 9.
+
 ## 4. Input attributes
 
 Correct attributes give users the right mobile keyboard and working autofill. Missing them is invisible on a desktop and painful on a phone.
@@ -68,6 +72,7 @@ Also:
 - Allow paste everywhere, including passwords and codes.
 - Provide a show or hide toggle on password fields. A confirm password field is unnecessary when the toggle exists.
 - Trim whitespace before validating. Accept common formats (spaces in phone and card numbers) and normalize them in code instead of rejecting them.
+- Show long numbers and codes in groups so they are easy to read and check: card numbers in fours, phone numbers in the local pattern, IBANs in fours, one time codes and reference numbers in threes or fours. Group them when displaying, and optionally while typing, but store them without spaces.
 - Use `autoFocus` on the first field only when the form is the sole purpose of the view, such as a dialog or a login page.
 
 ## 5. Validation

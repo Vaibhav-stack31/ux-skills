@@ -138,6 +138,8 @@ A consistent page skeleton removes most layout decisions:
 - Put the most important content in the top left region; people scan in an F pattern.
 - Do not wrap everything in cards. A card is for a self contained unit among siblings. A single form on a page does not need a card, and cards inside cards add borders without adding meaning.
 - Dashboards: lead with the two to four numbers that matter, then the list that needs attention. Do not fill space with charts nobody asked for.
+- Every element must earn its place. Show what the current task needs; a few actions and fields do most of the work, so keep those visible and move rarely used options into an "Advanced" section, a menu, or a settings page. Fewer visible choices means faster decisions.
+- Plan and pricing pickers: three or four options side by side, with one marked "Recommended" using the existing accent and the view's one primary button. More options belong in a comparison table.
 
 ## 8. Responsive behavior
 

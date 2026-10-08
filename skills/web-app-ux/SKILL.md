@@ -71,6 +71,7 @@ Read only what the task needs. Each file is self contained.
 - `references/accessibility.md`: semantics, focus, contrast, target size, motion, announcements.
 - `references/mern-data-ux.md`: how the Express and MongoDB side must behave so the UI can be good (pagination, error shape, optimistic updates, search). Read when touching API routes or data fetching.
 - `references/audit.md`: review procedure, severity scale, report template, scanner usage.
+- `references/ux-laws.md`: the 30 Laws of UX mapped to the rules in this skill, plus how to resolve the places where they pull in different directions. Read when a principle is named or a design decision needs a reason.
 
 ## 6. Done checklist
 
@@ -88,6 +89,8 @@ Check every item against the code before saying the work is complete. If an item
 - [ ] Submit and mutation buttons show pending state and cannot be double fired
 - [ ] Success is confirmed (toast, inline message, or visible change) and the user lands somewhere sensible
 - [ ] Destructive actions use a confirmation with specific wording, or provide undo
+- [ ] Values and statuses use the user's words, not enums or internal names
+- [ ] No up front tours; significant flows end on a completion screen; unfinished work is easy to resume
 - [ ] Buttons show distinct hover, active, focus visible, disabled, and pending states
 - [ ] Clickable things look clickable (button styling, underlined links, hover and pointer on clickable rows); static things do not
 
@@ -95,6 +98,8 @@ Check every item against the code before saying the work is complete. If an item
 - [ ] Every input has a visible label that is linked to it
 - [ ] Correct `type`, `inputMode`, and `autoComplete`
 - [ ] Errors appear next to the field, in plain language, and input is preserved
+- [ ] Nothing asked that the app already knows; long forms in steps of three to six fields with "Step N of M" and a review step
+- [ ] No preselected opt ins, no guilt wording on decline options, full price shown before the last step
 
 **Layout**
 - [ ] Shared left edge; numbers right aligned with `tabular-nums`

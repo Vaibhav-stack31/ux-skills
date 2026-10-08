@@ -22,7 +22,7 @@ List the routes and the component behind each one. That list is your checklist.
 node <skill-dir>/scripts/ux-scan.mjs <path-to-client-src>
 ```
 
-Add `--json` for machine readable output. The scanner is a set of static heuristics. It finds likely problems fast (clickable divs, missing labels, missing alt text, removed focus outlines, hand built modals that leave the page behind them scrollable or reachable, data views without loading or error handling, arbitrary values, custom buttons without hover or focus styles, static elements that look clickable, tight body line height, extra font families, harsh shadows, raised surfaces that vanish in dark mode, text over images without a scrim). It produces false positives and it cannot see layout, flow, or copy problems. Confirm each finding by reading the code, and never treat a clean scan as a pass.
+Add `--json` for machine readable output. The scanner is a set of static heuristics. It finds likely problems fast (clickable divs, missing labels, missing alt text, removed focus outlines, hand built modals that leave the page behind them scrollable or reachable, data views without loading or error handling, arbitrary values, custom buttons without hover or focus styles, static elements that look clickable, tight body line height, extra font families, harsh shadows, raised surfaces that vanish in dark mode, text over images without a scrim, preselected consent or marketing checkboxes, guilt wording on decline buttons, raw enum values shown as labels). It produces false positives and it cannot see layout, flow, or copy problems. Confirm each finding by reading the code, and never treat a clean scan as a pass.
 
 ## 3. Review each screen
 

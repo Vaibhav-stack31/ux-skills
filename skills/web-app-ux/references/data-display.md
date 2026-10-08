@@ -19,6 +19,8 @@
 
 Do not use cards for data that users need to compare. A grid of cards with five fields each is a table that is harder to read.
 
+When users choose between a few items (plans, products, versions), put them side by side in one view instead of making them open each one and remember the differences.
+
 ## 2. Tables
 
 ### Column alignment
@@ -37,6 +39,8 @@ Do not use cards for data that users need to compare. A grid of cards with five 
 - Empty cells show a muted "None" or hyphen.
 - Header labels are short nouns in sentence case. Give an actions column a visually hidden header: `<TableHead><span className="sr-only">Actions</span></TableHead>`.
 - Units go in the header ("Size (MB)"), not repeated in every cell.
+- Show values in the user's words, not the database's. "Paid", not `PAYMENT_SUCCEEDED`; "Workspace", not "tenant"; "Admin", not `role_2`. Map every enum to a label (and badge color) in one place and use that map everywhere.
+- Show long ids and codes grouped (see `forms.md` section 4) with a copy button when users need to paste them elsewhere.
 
 ### Density and visual treatment
 - Row height 40 to 52px. Dense data tools use the low end; consumer screens use the high end.
@@ -144,6 +148,8 @@ Each item has a predictable anatomy, in this order:
 - Virtualize (TanStack Virtual) once a list can exceed a few hundred rendered items.
 - Reordering by drag needs a keyboard alternative ("Move up" and "Move down" in the item menu).
 
+Long lists read better in labelled groups: by date ("Today", "Yesterday", "Earlier this week") for activity, by status or category for tasks and settings. Each group is a small, meaningful chunk.
+
 ## 4. Cards
 
 - Use a consistent internal structure across sibling cards: media, title, supporting text, metadata, actions, always in the same positions.
@@ -178,7 +184,7 @@ Each item has a predictable anatomy, in this order:
 
 There are three different empty situations and each needs its own message. Treating them the same is a common failure.
 
-1. **First use, nothing created yet**: explain what will appear here and give the primary action.
+1. **First use, nothing created yet**: explain what will appear here and give the primary action. This is where users learn the feature, because they skip tours and help pages: one sentence on what it does and why, not a tutorial.
 2. **No results for the current search or filters**: say so, echo the query, and offer to clear filters. Do not show the "create your first" message here.
 3. **Error loading**: this is not an empty state. Show the error with retry.
 
