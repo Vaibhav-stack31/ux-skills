@@ -5,7 +5,7 @@
   "plugins": [
     {
       "name": "ux-skills",
-      "source": { "source": "github", "repo": "Vaibhav-stack31/ux-skills" },
+      "source": "./",
       "description": "UX rules and audits for React web apps (plain React, MERN, Next.js) and React Native apps"
     }
   ]
