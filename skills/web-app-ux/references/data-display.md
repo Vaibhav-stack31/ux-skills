@@ -19,6 +19,8 @@
 
 Do not use cards for data that users need to compare. A grid of cards with five fields each is a table that is harder to read.
 
+A list and grid (or table and cards) toggle is worth adding only when users both browse visually and compare attributes in the same collection, such as products, files, or media. Default to the view that fits the main task, remember the choice (URL or saved preference), and keep both views complete: no information only one of them shows.
+
 When users choose between a few items (plans, products, versions), put them side by side in one view instead of making them open each one and remember the differences.
 
 ## 2. Tables
@@ -164,6 +166,9 @@ Long lists read better in labelled groups: by date ("Today", "Yesterday", "Earli
 - Place the toolbar directly above the collection: search on the left, filters next to it, view options and sort on the right.
 - Search: `type="search"`, a search icon, an accessible label, a clear button when not empty, debounced about 300ms. Show the result count ("12 results").
 - Filters: show active filters as removable chips and provide "Clear all". Users must always be able to see why the list is shorter than expected.
+- Help users decide before they click: show the number of results next to each filter option ("In stock (24)"), and show options that would return nothing as disabled with "(0)" instead of letting the user discover an empty list.
+- On desktop keep filters in view (a sidebar or toolbar) rather than behind several clicks or on another page.
+- For range filters over large sets (price, date, size), a small histogram behind the range slider shows where the results are, so users can pick a range that is not empty.
 - Apply filters immediately on desktop. On mobile, put filters in a `Sheet` with an "Apply" button that shows the result count.
 - Store search, filters, sort, and page in the URL query string (`useSearchParams` or the router's equivalent). Refresh, back, and shared links must reproduce the same view.
 - Changing a filter or search resets to page 1.

@@ -53,7 +53,11 @@ A predictable skeleton for most screens:
 - Screen horizontal padding: `px-4` (16) as the default, the same on every screen.
 - Almost every screen should scroll, even if its content fits on your test device. Smaller phones, larger fonts, and the keyboard all reduce the space. Use `ScrollView` for static content and a list component for collections.
 - One primary action per screen. If it must always be visible, pin it at the bottom above the safe area. Otherwise put it at the end of the content.
+- Every screen has one focal point: the thing the user should see or do first. Emphasize it through one or two channels (size and weight, or the accent color), not every channel at once. If everything is emphasized, nothing is.
+- Proportion: sizes follow importance. A secondary element is never larger or louder than the primary one, and images, icons, and avatars stay in proportion to the text beside them.
+- Unity and variety: repeat the same components, spacing, radii, and type on every screen so users learn the app once. Use variety only where it carries meaning (the primary action, a status, the selected item, the recommended option), never for decoration.
 - Every element must earn its place on a small screen. A few actions and fields do most of the work; keep those visible and move rarely used options into an "Advanced" section, an overflow menu, or a settings screen. Fewer visible choices means faster decisions.
+- "Cleaner" is not the goal. Ask what the user is trying to decide on this screen and keep everything that helps them decide visible, even if rows get denser: price, availability, and ratings on product rows; result counts on filters; the key attribute on each list row. Hide what is rarely used, not what the decision needs.
 - Plan and pricing pickers: three or four options, with one marked "Recommended" using the existing accent and the screen's one primary button.
 - Group content into sections with a small heading and 24 to 32 between sections.
 
@@ -79,6 +83,7 @@ A predictable skeleton for most screens:
 - Line height about 1.3 to 1.5 times the font size for body text (`leading-6` with `text-base`). Headings can be tighter, about 1.2. Never set a `lineHeight` at or below the font size on multi line text; lines collide, and descenders get clipped on Android.
 - Letter spacing: tighten large headings slightly (`tracking-tight`, or `letterSpacing` around -0.3 at 24 and up). Leave body text at the default. Widen only short uppercase labels (`tracking-wide`). Never tighten text at 16 or smaller.
 - Hierarchy through size, weight, and `text-muted-foreground`, not through many colors.
+- Scale: each step up must be clearly larger than the one below. Do not use near duplicates such as 15 next to 16, which read as a mistake rather than a level.
 
 Font scaling:
 - Users set a system font size, and many set it large. React Native scales `Text` automatically. Never set `allowFontScaling={false}` to protect a layout.
@@ -90,6 +95,17 @@ Font scaling:
 
 ## 5. Color, depth, and dark mode
 
+Give every color a role. Colors added one component at a time end up as a pile of unrelated hues; roles keep the set small and consistent.
+
+- **Brand**: the logo and the brand accent. Fixed; do not tint or reinvent it per screen.
+- **Layout (neutrals)**: the gray ramp that does the structural work: `background`, `card`, `muted`, `border` for surfaces and dividers (low contrast), and `foreground`, `muted-foreground` for text (high contrast). Most of any screen is neutrals.
+- **Meaning (status)**: `destructive`, plus success, warning, and info if the theme defines them. Used only for that meaning, never for decoration, and always with an icon or text label.
+- **Interactive**: `primary`, the one accent, for buttons, links, selection, and focus. Pressed and selected states are lighter or darker steps of the same color (`active:bg-primary/90`), never a new hue.
+- **Disabled**: a muted, still readable treatment (`opacity-50` or `text-muted-foreground`), distinguishable from the background.
+- The interactive accent must reach 3:1 against both the light and the dark background; define it per theme if one value cannot.
+- A new color goes into the theme as a token with a role, never straight into a component. More than about three raw hues across an app means roles are missing.
+
+Rules:
 - Use semantic tokens (`bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`, `text-primary-foreground`, `bg-destructive`) defined as CSS variables in the project theme. Raw palette colors and hex values break dark mode.
 - If the app supports dark mode, every screen must be checked in both. Follow the system setting by default (`useColorScheme`), with an optional in app override.
 - Set the status bar style to match the background (`expo-status-bar` or the navigator's option) so the clock and battery icons stay visible.

@@ -22,19 +22,30 @@ List the routes (the `app/` folder in Expo Router, or the navigator definitions)
 node <skill-dir>/scripts/ux-scan.mjs <path-to-app-source>
 ```
 
-Add `--json` for machine readable output. The scanner is a set of static heuristics. It quickly finds likely problems: pressables without roles or labels, small touch targets, `ScrollView` with `.map()`, lists without empty components, inputs without keyboard configuration or keyboard avoidance, disabled font scaling, the deprecated core `SafeAreaView`, text classes on `View`, hand built overlays that let taps, the screen reader, or Android back reach the screen behind them, `Modal` without `onRequestClose`, disabled pressables with no disabled look, underlined text that is not pressable, tight line height, extra font families, harsh shadows, raised surfaces that vanish in dark mode, text over images without a scrim, preselected consent or marketing toggles, guilt wording on decline buttons, raw enum values shown as labels, and data screens without loading or error handling. It produces false positives, and it cannot see layout, flow, or copy. Confirm each finding by reading the code, and never treat a clean scan as a pass.
+Add `--json` for machine readable output. The scanner is a set of static heuristics. It quickly finds likely problems: pressables without roles or labels, small touch targets, `ScrollView` with `.map()`, lists without empty components, inputs without keyboard configuration or keyboard avoidance, disabled font scaling, the deprecated core `SafeAreaView`, text classes on `View`, hand built overlays that let taps, the screen reader, or Android back reach the screen behind them, `Modal` without `onRequestClose`, disabled pressables with no disabled look, underlined text that is not pressable, tight line height, extra font families, harsh shadows, raised surfaces that vanish in dark mode, text over images without a scrim, preselected consent or marketing toggles, guilt wording on decline buttons, raw enum values shown as labels, too many raw color hues across the app, and data screens without loading or error handling. It produces false positives, and it cannot see layout, flow, or copy. Confirm each finding by reading the code, and never treat a clean scan as a pass.
 
 ## 3. Review each screen
 
 Read the code for each screen and walk through these questions.
 
+Work at four levels, from small to large, so nothing is missed:
+
+1. **Detail**: individual elements. Type sizes and weights from the scale, icon sizes matched to text, colors from tokens with a role, every state of each control.
+2. **Screen**: one screen as a whole. One focal point, clear hierarchy, shared edges, balanced spacing, nothing competing with the primary action.
+3. **Function**: flows across screens. Every path works end to end, back and gestures behave, and each step gives the user what they need to decide.
+4. **App**: the whole product. The same components, terms, colors, and patterns everywhere, so learning one screen teaches the rest.
+
+The questions below follow these levels.
+
 **Purpose and hierarchy**
 - Is it clear within a few seconds what the screen is for?
 - Is there one primary action, reachable by thumb?
+- What is the user trying to decide here, and is everything that helps them decide visible (counts, prices, status, key attributes), or was it hidden to look cleaner?
 
 **Layout** (see `layout-and-touch.md`)
 - Safe areas handled once, top and bottom?
 - One left edge, consistent screen padding, spacing from the scale?
+- Does every color have a role (brand, neutral, status, interactive)? Are pressed and selected shades of the same accent rather than new hues? Do similar things look and behave the same on every screen?
 - Does it survive a small phone and the largest font size?
 
 **Touch and feedback** (see `feedback-and-states.md`)

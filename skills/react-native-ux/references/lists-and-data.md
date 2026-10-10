@@ -18,6 +18,8 @@
 - **`SectionList`** or FlashList with sticky headers: grouped data (contacts by letter, transactions by date).
 - **`ScrollView` with `.map()`**: only for short, fixed content such as a settings screen with a known handful of rows. Using it for real data causes slow first render, memory growth, and dropped frames.
 
+A list and grid toggle is worth adding only when users both browse visually and compare attributes in the same collection, such as products, photos, or files. Default to the view that fits the main task, remember the choice, and keep both views complete: no information only one of them shows. A grid needs `numColumns` derived from the screen width.
+
 Never nest a vertical virtualized list inside a vertical `ScrollView`. Put the surrounding content into the list's `ListHeaderComponent` and `ListFooterComponent` instead.
 
 ## 2. List item anatomy
@@ -173,6 +175,8 @@ In all cases: right align numbers with tabular figures, keep units in labels, sh
 - Keep the keyboard from blocking results: `keyboardDismissMode="on-drag"` on the results list.
 - Filters and sort open in a bottom sheet, with an "Apply" button that states the result count ("Show 24 results") and a "Reset" option.
 - Show active filters as removable chips under the search bar, in a horizontal scroller if there are many. The filter button shows a count badge when filters are active.
+- Help users decide before they tap: show the number of results next to each filter option ("In stock (24)"), and show options that would return nothing as disabled with "(0)".
+- For range filters over large sets (price, date, distance), a small histogram above the range slider shows where the results are, so users can pick a range that is not empty.
 - Show recent searches or suggestions before the user types, instead of an empty screen.
 
 ## 8. Empty states

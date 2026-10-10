@@ -54,7 +54,7 @@ These apply to every screen. Each one targets a failure that generated UI makes 
 7. **Keyboard and screen reader operable.** Real `<button>` and `<a>` elements, visible focus, labels on every input, accessible names on icon buttons.
 8. **Responsive from 360px up.** Design mobile first. Nothing scrolls sideways except content inside an intentional scroll container.
 9. **Shareable state lives in the URL.** Filters, search, sort, page, and active tab should survive refresh, back, and link sharing.
-10. **Restraint.** No gradients, glass effects, emoji, pulsing badges, or landing page heroes on a working screen unless the user asked for them. A scrim behind text on an image is not decoration. Decoration that does not help the task competes with the content that does.
+10. **Restraint.** No gradients, glass effects, emoji, pulsing badges, or landing page heroes on a working screen unless the user asked for them. A scrim behind text on an image is not decoration, and restraint never means hiding what the user needs to decide. Decoration that does not help the task competes with the content that does.
 
 Write copy in plain language: buttons are a verb plus a noun ("Create project", not "Submit"), and error messages say what happened and what to do next.
 
@@ -104,6 +104,7 @@ Check every item against the code before saying the work is complete. If an item
 **Layout**
 - [ ] Shared left edge; numbers right aligned with `tabular-nums`
 - [ ] Spacing and colors come from tokens; no arbitrary values
+- [ ] One focal point per view; every color has a role, and interactive states are shades of the same accent
 - [ ] One sans-serif font family; body text at about 1.5 line height, tighter only on headings; tracking tightened only on large headings
 - [ ] Raised surfaces use lighter tokens (`bg-card`, `bg-popover`) and a border, so depth shows in dark mode; light mode shadows are soft
 - [ ] Text over an image has a gradient scrim or blurred backing and passes 4.5:1

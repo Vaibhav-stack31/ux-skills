@@ -236,6 +236,7 @@ const cls = (attrs) => (attrs.match(/className=(?:"([^"]*)"|\{[^}]*?["'`]([^"'`]
 const files = fs.existsSync(root) && fs.statSync(root).isFile() ? [root] : walk(root);
 const findings = [];
 const fontFamilies = new Map();
+const hues = new Map();
 const add = (rule, file, line) => findings.push({ id: rule.id, severity: rule.sev, file: path.relative(process.cwd(), file), line, message: rule.msg });
 
 for (const file of files) {
@@ -261,6 +262,9 @@ for (const file of files) {
     const name = (m[1] || m[2]).split(/[_-]/)[0].toLowerCase();
     if (name && !/mono|code|system|^sans-serif$/.test(name) && !fontFamilies.has(name)) fontFamilies.set(name, { file, line: lineAt(src, m.index) });
   }
+  for (const m of src.matchAll(/\b(?:bg|text|border|ring|fill|stroke|from|via|to|outline|divide|shadow|decoration)-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}\b/g)) {
+    if (!hues.has(m[1])) hues.set(m[1], { file, line: lineAt(src, m.index) });
+  }
 }
 
 // project level: more than one non monospace font family
@@ -269,6 +273,14 @@ if (fontFamilies.size > 1) {
   add({ id: "multiple-font-families", sev: "medium",
     msg: `More than one font family used (${[...fontFamilies.keys()].join(", ")}). Use one sans-serif family for the app, plus a monospace for code.` },
   second.file, second.line);
+}
+
+// project level: raw palette hues used directly instead of color roles
+if (hues.size > 3) {
+  const [, , , fourth] = [...hues.values()];
+  add({ id: "color-sprawl", sev: "medium",
+    msg: `${hues.size} raw color hues used directly (${[...hues.keys()].join(", ")}). Give colors roles (brand, neutral, status, interactive) as theme tokens instead of picking hues per component.` },
+  fourth.file, fourth.line);
 }
 
 const ORDER = ["high", "medium", "low"];

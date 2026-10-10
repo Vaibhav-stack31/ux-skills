@@ -51,7 +51,7 @@ If the answers depend on product decisions you cannot infer, ask the user instea
 7. **Primary actions live in the thumb zone** (lower half of the screen). The top corners are the hardest area to reach.
 8. **Follow platform conventions**: native stack navigation and gestures, bottom tabs for top level destinations, system back behavior, platform appropriate pickers and sheets.
 9. **Support the user's settings**: font scaling, dark mode, reduced motion, and screen readers (VoiceOver and TalkBack).
-10. **Restraint.** No gradients, glass effects, emoji icons, or decorative animation unless asked. A scrim behind text on an image is not decoration. A phone screen has no room for content that does not help the task.
+10. **Restraint.** No gradients, glass effects, emoji icons, or decorative animation unless asked. A scrim behind text on an image is not decoration, and restraint never means hiding what the user needs to decide. A phone screen has no room for content that does not help the task.
 
 Write copy in plain language: buttons are a verb plus a noun ("Add address"), and errors say what happened and what to do next. Mobile copy is shorter than web copy.
 
@@ -78,6 +78,7 @@ Check every item against the code before saying the work is complete.
 - [ ] Works on a small phone (about 360 wide) and does not stretch awkwardly on a tablet
 - [ ] Text still fits at large system font sizes; no fixed heights on text containers
 - [ ] One sans-serif font family; body line height about 1.3 to 1.5; letter spacing tightened only on large headings
+- [ ] One focal point per screen; every color has a role, and pressed states are shades of the same accent
 - [ ] Raised surfaces use lighter tokens and a border, so depth shows in dark mode; light mode shadows are soft
 - [ ] Text over an image has a gradient scrim or blurred backing and passes 4.5:1
 

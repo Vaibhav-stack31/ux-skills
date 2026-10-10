@@ -58,6 +58,7 @@ Rules:
 - Inputs must render at 16px or larger on mobile or iOS Safari zooms the page on focus. shadcn's `Input` uses `text-base md:text-sm` for this reason; keep it.
 - Keep reading text to 45 to 75 characters per line: `max-w-prose` or `max-w-2xl`.
 - Hierarchy comes from size, weight, and color together. Use `text-muted-foreground` for secondary text instead of making it smaller.
+- Scale: each step up the type scale must be clearly larger than the one below. Tailwind's sizes already step by a consistent ratio; do not add near duplicates such as `text-[15px]` next to `text-base`, which read as a mistake rather than a level.
 - Use `text-balance` on headings and `text-pretty` on paragraphs to avoid orphaned words.
 - Sentence case for headings, buttons, and labels ("Create project"). Avoid ALL CAPS except very short overline labels with letter spacing.
 - Use `font-medium` for emphasis in UI. Reserve `font-bold` for rare cases.
@@ -70,6 +71,17 @@ Line height and letter spacing:
 
 ## 4. Color
 
+Give every color a role. Colors added one component at a time end up as a pile of unrelated hues; roles keep the set small and consistent.
+
+- **Brand**: the logo and the brand accent. Fixed; do not tint or reinvent it per screen.
+- **Layout (neutrals)**: the gray ramp that does the structural work: `background`, `card`, `muted`, `border` for surfaces and dividers (low contrast), and `foreground`, `muted-foreground` for text (high contrast). Most of any screen is neutrals.
+- **Meaning (status)**: `destructive`, plus success, warning, and info if the theme defines them. Used only for that meaning, never for decoration, and always with an icon or text label.
+- **Interactive**: `primary`, the one accent, for buttons, links, selection, and the focus `ring`. Hover, active, and pressed states are lighter or darker steps of the same color (`hover:bg-primary/90`), never a new hue.
+- **Disabled**: a muted, still readable treatment (`disabled:opacity-50` on the token, or `text-muted-foreground`). A disabled control must stay distinguishable from the background.
+- The interactive accent must reach 3:1 against both the light and the dark background; define it per theme if one value cannot.
+- A new color goes into the theme as a token with a role, never straight into a component. More than about three raw hues across an app means roles are missing.
+
+Rules:
 - Use semantic tokens: `bg-background`, `bg-card`, `bg-muted`, `text-foreground`, `text-muted-foreground`, `border`, `bg-primary text-primary-foreground`, `bg-destructive`, `ring`. They adapt to dark mode and to theme changes. Raw palette classes (`bg-blue-500`, `text-gray-400`) do not.
 - One accent color for primary actions and selected states. If everything is colored, nothing stands out.
 - Status colors (success, warning, error, info) always come with an icon or text label. About 1 in 12 men cannot reliably tell red from green.
@@ -138,7 +150,11 @@ A consistent page skeleton removes most layout decisions:
 - Put the most important content in the top left region; people scan in an F pattern.
 - Do not wrap everything in cards. A card is for a self contained unit among siblings. A single form on a page does not need a card, and cards inside cards add borders without adding meaning.
 - Dashboards: lead with the two to four numbers that matter, then the list that needs attention. Do not fill space with charts nobody asked for.
+- Every screen has one focal point: the thing the user should see or do first. Emphasize it through one or two channels (size and weight, or the accent color), not every channel at once. If everything is emphasized, nothing is.
+- Proportion: sizes follow importance. A secondary element is never larger or louder than the primary one, and images, icons, and avatars stay in proportion to the text beside them.
+- Unity and variety: repeat the same components, spacing, radii, and type everywhere so users learn the interface once. Use variety only where it carries meaning (the primary action, a status, the selected item, the recommended option), never for decoration.
 - Every element must earn its place. Show what the current task needs; a few actions and fields do most of the work, so keep those visible and move rarely used options into an "Advanced" section, a menu, or a settings page. Fewer visible choices means faster decisions.
+- "Cleaner" is not the goal. Ask what the user is trying to decide on this screen and keep everything that helps them decide visible, even if the screen gets denser: price, availability, and ratings on product rows; result counts on filters; the key attribute on each list row. Hide what is rarely used, not what the decision needs.
 - Plan and pricing pickers: three or four options side by side, with one marked "Recommended" using the existing accent and the view's one primary button. More options belong in a comparison table.
 
 ## 8. Responsive behavior

@@ -37,6 +37,22 @@ The laws describe tendencies, not hard limits. Where a law suggests a number (su
 | Working Memory | Users hold only a little in mind while working. Show, do not make them recall. | `forms-and-keyboard.md` section 1 (review screen); `lists-and-data.md` section 7 (visible filters) |
 | Zeigarnik Effect | Unfinished tasks stay on the mind. Make them easy to resume. | `navigation-and-gestures.md` section 11 (drafts, continue where you left off); `forms-and-keyboard.md` section 8 (save drafts) |
 
+## Other design frameworks in this skill
+
+The same ideas appear under other names in design courses and talks. They map onto the rules like this:
+
+| Framework | Where the rules are |
+|:--|:--|
+| Emphasis (one focal point, visual weight) | `layout-and-touch.md` section 2; Von Restorff Effect above |
+| Hierarchy | `layout-and-touch.md` section 4 and section 2 |
+| Scale and proportion | `layout-and-touch.md` section 4 (type scale) and section 2 (sizes follow importance) |
+| Unity and variety | `layout-and-touch.md` section 2; Law of Similarity above |
+| Gestalt: similarity, proximity, common region | Laws of Similarity, Proximity, and Common Region above |
+| C.R.A.P.: contrast, repetition, alignment, proximity | `layout-and-touch.md` sections 3 to 5 (spacing and alignment, type, color) and section 2 (unity) |
+| Color roles: brand, layout, meaning, interactive | `layout-and-touch.md` section 5 |
+| Helping users decide (filter counts, histograms, layout toggles, density) | `lists-and-data.md` sections 1 and 7; `layout-and-touch.md` section 2 |
+| Four level design review: detail, screen, function, app | `audit.md` section 3 |
+
 ## Where the laws pull in different directions
 
 - **Defaults versus consent.** Sensible defaults reduce effort (Tesler's Law), but a default never opts the user into marketing, data sharing, paid add ons, or consent (Cognitive Bias). Those start off.
@@ -44,3 +60,6 @@ The laws describe tendencies, not hard limits. Where a law suggests a number (su
 - **First and last positions versus destructive actions.** The most important item goes first (Serial Position Effect). Destructive options stay last in action sheets and menus, marked destructive, so they are findable but hard to hit by accident.
 - **Standing out versus one accent.** A recommended option is highlighted with the existing accent and the screen's one primary button (Von Restorff Effect), not with a new color or decoration.
 - **Aesthetics versus decoration.** A polished app feels more usable (Aesthetic-Usability Effect), but polish means consistent spacing, type, and color, not gradients or effects.
+- **Clean versus informative.** Fewer visible choices speed decisions (Hick's Law, Cognitive Load), but hiding what the user needs to decide slows them more. Hide what is rarely used; keep counts, prices, status, and key attributes visible even if the screen gets denser.
+- **One layout versus a layout toggle.** Each collection gets the layout that fits its main task. Add a list and grid toggle only when users both browse and compare the same collection, with a sensible default that is remembered.
+- **Unity versus variety.** Repeat the same components and styles everywhere; variety is reserved for elements that carry meaning (the primary action, a status, the selected or recommended item).

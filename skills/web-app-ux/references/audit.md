@@ -22,16 +22,26 @@ List the routes and the component behind each one. That list is your checklist.
 node <skill-dir>/scripts/ux-scan.mjs <path-to-client-src>
 ```
 
-Add `--json` for machine readable output. The scanner is a set of static heuristics. It finds likely problems fast (clickable divs, missing labels, missing alt text, removed focus outlines, hand built modals that leave the page behind them scrollable or reachable, data views without loading or error handling, arbitrary values, custom buttons without hover or focus styles, static elements that look clickable, tight body line height, extra font families, harsh shadows, raised surfaces that vanish in dark mode, text over images without a scrim, preselected consent or marketing checkboxes, guilt wording on decline buttons, raw enum values shown as labels). It produces false positives and it cannot see layout, flow, or copy problems. Confirm each finding by reading the code, and never treat a clean scan as a pass.
+Add `--json` for machine readable output. The scanner is a set of static heuristics. It finds likely problems fast (clickable divs, missing labels, missing alt text, removed focus outlines, hand built modals that leave the page behind them scrollable or reachable, data views without loading or error handling, arbitrary values, custom buttons without hover or focus styles, static elements that look clickable, tight body line height, extra font families, harsh shadows, raised surfaces that vanish in dark mode, text over images without a scrim, preselected consent or marketing checkboxes, guilt wording on decline buttons, raw enum values shown as labels, too many raw color hues across the app). It produces false positives and it cannot see layout, flow, or copy problems. Confirm each finding by reading the code, and never treat a clean scan as a pass.
 
 ## 3. Review each screen
 
 Read the component code for each screen and walk through these questions. The scanner cannot answer them.
 
+Work at four levels, from small to large, so nothing is missed:
+
+1. **Detail**: individual elements. Type sizes and weights from the scale, icon sizes matched to text, colors from tokens with a role, every state of each control.
+2. **Page**: one screen as a whole. One focal point, clear hierarchy, shared edges, balanced spacing, nothing competing with the primary action.
+3. **Function**: flows across screens. Every path works end to end, navigation and back behave, and each step gives the user what they need to decide.
+4. **App**: the whole product. The same components, terms, colors, and patterns everywhere, so learning one screen teaches the rest.
+
+The questions below follow these levels.
+
 **Purpose and hierarchy**
 - Is it obvious within a few seconds what this screen is for and what to do first?
 - Is there exactly one primary action, placed where users look for it?
 - Does visual weight match importance, or is everything equally loud?
+- What is the user trying to decide here, and is everything that helps them decide visible (counts, prices, status, key attributes), or was it hidden to look cleaner?
 
 **States** (see `data-display.md`, `actions-and-feedback.md`)
 - What renders while loading, when empty, when filtered to nothing, on error?
@@ -51,6 +61,7 @@ Read the component code for each screen and walk through these questions. The sc
 **Layout and consistency** (see `layout-and-visual.md`)
 - One left edge? Numbers right aligned? Spacing from the scale?
 - Do similar things look and behave the same across screens (button order, date formats, terms)?
+- Does every color have a role (brand, neutral, status, interactive)? Are hover and pressed shades of the same accent rather than new hues?
 - Does it hold up at 360px?
 
 **Navigation** (see `navigation.md`)
