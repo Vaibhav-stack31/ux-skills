@@ -103,6 +103,7 @@ Give every color a role. Colors added one component at a time end up as a pile o
 - **Interactive**: `primary`, the one accent, for buttons, links, selection, and focus. Pressed and selected states are lighter or darker steps of the same color (`active:bg-primary/90`), never a new hue.
 - **Disabled**: a muted, still readable treatment (`opacity-50` or `text-muted-foreground`), distinguishable from the background.
 - The interactive accent must reach 3:1 against both the light and the dark background; define it per theme if one value cannot.
+- Pair every background token with its own foreground token (`bg-primary` with `text-primary-foreground`, `bg-card` with `text-foreground`). Mixing a token background with a raw text color, or a foreground token with the wrong background, breaks contrast as soon as the theme changes.
 - A new color goes into the theme as a token with a role, never straight into a component. More than about three raw hues across an app means roles are missing.
 
 Rules:
